@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -8,6 +7,7 @@ public class Main {
 
         Manager manager=new Manager();
        // SubtaskManager subtaskManager = new SubtaskManager();
+        Manager manager1 = new Manager();
 
         while (true) {
             System.out.println("1-Ввести задачу,2- посмотреть список задач, 3 - Выход");
@@ -17,7 +17,7 @@ public class Main {
                 Integer j = scanner.nextInt();
                 if (j==2) {
                     System.out.println(" Введите название,описание, статус");
-                    String title = "Название эпика - переезд";
+                    String title = "переезд";
                     String description = " описание эпика - переезд в другую квартиру";
                     String status = "new";
 
@@ -33,7 +33,6 @@ public class Main {
                     descriptionSub = "собрать упаковать одежду и.т.д";
                     statusSub = "new";
                     manager.CreateSubtasks(titleSub,descriptionSub,statusSub);
-
                     manager.CreateEpic(title,description,status);
 
 
@@ -46,6 +45,10 @@ public class Main {
                     statusSub = "new";
                     manager.CreateSubtasks(titleSub,descriptionSub,statusSub);
                     manager.CreateEpic(title,description,status);
+
+                   System.out.println("Ведите id");
+                   Double id = 4.3;
+                    System.out.println (manager.getTitleById(id));
 
                 }
 
