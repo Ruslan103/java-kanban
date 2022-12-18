@@ -5,7 +5,7 @@ public class Task {
     private double id; //Уникальный идентификационный номер задачи, по которому её можно будет найти
     // Для генерации идентификаторов можно использовать числовое поле класса менеджер, увеличивая его на 1, когда нужно получить новое значение.
     private String status; // Статус, отображающий её прогресс
-    private  String description; // описание
+    private String description; // описание
 
     public Task(String title, String description, String status) {
         this.title = title;

@@ -6,6 +6,6 @@ public class Epic extends Task {//Каждый эпик знает, какие �
 
     public Epic(String title, String description, String status) {
         super(title, description, status);
-        this.subtasksId =new ArrayList<>();
+        this.subtasksId = new ArrayList<>();
     }
 }
