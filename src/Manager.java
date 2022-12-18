@@ -105,20 +105,19 @@ public class Manager {
         epic.setId(epicId + 1);
         epicId = epic.getId();
         epics.put(epicId, epic);
-        for (int i = 0; i < subtasksList.size(); i++) {
-            epic.subtasksId.add(subtasksList.get(i).getId());
+        for (Subtask subtask : subtasksList) {
+            epic.subtasksId.add(subtask.getId());
         }
         subtasksList = new ArrayList<>();
         epics.put(epicId, epic);
     }
 
-    void CreateEpic(Subtask subtask) { //создание подзадачи п.2.4
+    void CreateSubtask(Subtask subtask) { //создание подзадачи п.2.4
         subtask.setId(subtaskId + 1);
         subtaskId = subtask.getId();
         subtasksList.add(subtask);
         subtasks.put(subtaskId, subtask);
     }
-
 
 
     void updateTask(Double id, Task task) { //  обновление задачи п.2.5
@@ -131,7 +130,34 @@ public class Manager {
 
     void updateSubtasks(Double id, Subtask subtask) {// обновление подзадачи п.2.5
         subtasks.put(id, subtask);
-    }
+        ArrayList <Boolean> booleanList=new ArrayList<>();
+
+
+        boolean l = true;
+
+        if (Objects.equals(subtask.getStatus(), "DONE ")) { // если у подзадачи статус DONE то
+            for (Epic epic : epics.values()) { // проходим циклом по мапе эпика и ищем эпик в котором есть эта подзадача
+                if(epic.subtasksId.contains(id)) { // если нашли эпик содержайщий id подзадачи
+
+                    for (Double idSubtask:epic.subtasksId){ // проходим по всему списку id подзадач этого эпика
+
+                        for (Double j:subtasks.keySet() ){ // и с равниваем с ключом  мапы подзадач
+                            if (idSubtask.equals(j) ){ // если нашли id из списка то смотрим его статус;
+                            if (!subtasks.get(j).getStatus().equals("DONE")){
+                                l=false; // если хоть одина подзадача не имеет статус "DONE" то l=false
+                            }
+                            }
+
+                        }
+                    }
+                }
+                if (l){ // если l остался равен true то меняем статус эпика
+                    epic.setStatus("DONE");
+                }
+                }
+            }
+        }
+
 
 
 
@@ -169,7 +195,8 @@ public class Manager {
         }
         return titleSubtask; // возвращаю список с названием задач
     }
-    void status (String status){
+
+    void status(String status) {
 
     }
 }
