@@ -3,60 +3,58 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class Manager {
-    double taskId = 0.1;
-    double subtaskId = 0.3;
-    double epicId = 0.2;
-    HashMap<Double, Epic> epics = new HashMap<>(); // мапа с эпиком и его подзадачами
+    private int id = 0;
+    HashMap<Integer, Epic> epics = new HashMap<>(); // мапа с эпиком и его подзадачами
     ArrayList<Subtask> subtasksList = new ArrayList<>(); // список с подзадачами
-    HashMap<Double, Subtask> subtasks = new HashMap<>();
-    HashMap<Double, Task> tasks = new HashMap<>(); // список с задачами
+    HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    HashMap<Integer, Task> tasks = new HashMap<>(); // список с задачами
 
-    void CreateEpic(String title, String description, String status) {
+    public int createEpic(Epic epic) { // создание эпика п.2.4
+        epic.setId(id + 1);
+        id = epic.getId();
+        epics.put(id, epic);
+        return id;
+    }
 
-        Epic epic = new Epic(title, description, status);
-
-        epic.setId(epicId + 1);
-        epicId = epic.getId();
-        epics.put(epicId, epic);
-
-        for (Subtask subtask : subtasksList) {
-            epic.subtasksId.add(subtask.getId());
+    public Integer createSubtasks(Subtask subtask) {
+        for (Integer i:epics.keySet()){
+            if (i==subtask.getEpicID()) {
+                subtask.setId(id + 1);
+                id = subtask.getId();
+                subtasks.put(id, subtask);
+                epics.get(subtask.getEpicID()).getSubtasksID().add(id);
+                return id;
+            }
         }
-        subtasksList = new ArrayList<>();
+        return null;
     }
 
-
-    void CreateSubtasks(String title, String description, String status) {
-
-        Subtask subtask = new Subtask(title, description, status);
-        subtask.setId(subtaskId + 1);
-        subtaskId = subtask.getId();
-        subtasksList.add(subtask);
-        subtasks.put(subtaskId, subtask);
+    public int createTask(Task task) { // создание задачи п.2.4
+        task.setId(id + 1);
+        id = task.getId();
+        tasks.put(id, task);
+        return id;
     }
 
-    void CreateTask(String title, String description, String status) {
-        Task task = new Task(title, description, status);
-        task.setId(taskId + 1);
-        taskId = task.getId();
-        tasks.put(taskId, task);
+    //    ArrayList<Epic> getEpics() { // метод для вывода  эпиков (п.2.1 ТЗ)
+//        ArrayList<Epic> epicsList = new ArrayList<>();
+//        for (Integer i: epics.keySet()) {
+//            epicsList.add(epics.get(i));
+//        }
+//        return epicsList;
+//    }
+    ArrayList<Epic> getEpics() { // метод для вывода  эпиков (п.2.1 ТЗ)
+        return new ArrayList<>(epics.values());
     }
 
-    ArrayList<String> getEpics() { // метод для вывода названия эпиков (п.2.1 ТЗ)
-        ArrayList<String> epicsTitle = new ArrayList<>();
-        for (Double i : epics.keySet()) {
-            epicsTitle.add(epics.get(i).getTitle());
-        }
-        return epicsTitle;
+    ArrayList<Task> getTask() { // метод для вывода названия задач (п.2.1 ТЗ)
+
+        return new ArrayList<>(tasks.values());
     }
 
-    ArrayList<String> getTask() { // метод для вывода названия задач (п.2.1 ТЗ)
-        ArrayList<String> taskTitle = new ArrayList<>();
-        for (Double i : tasks.keySet()) {
-            taskTitle.add(tasks.get(i).getTitle());
+    ArrayList<Subtask> getSubtasks() { // метод для вывода названия задач (п.2.1 ТЗ)
 
-        }
-        return taskTitle;
+        return new ArrayList<>(subtasks.values());
     }
 
     void clearAllTasks() { // удаление всех задач (п.2.2 ТЗ)
@@ -65,137 +63,94 @@ public class Manager {
         subtasks.clear();
     }
 
-    String getTitleById(double id) { // Получение по идентификатору (п.2.3 ТЗ)
-
+    String getTitleById(int id) { // Получение по идентификатору (п.2.3 ТЗ)
         String title = "Задача по id не найдена";
-        if (id % 1 == 0.1) {
-            for (Double i : epics.keySet()) {
-                if (id == i) {
-                    title = epics.get(i).getTitle();
-                    return title;
-                }
+        for (Integer i : epics.keySet()) {
+            if (id == i) {
+                title = epics.get(i).getTitle();
+                return title;
             }
         }
-        if (id % 1 == 0.2) {
-            for (Double i : tasks.keySet()) {
-                if (id == i) {
-                    title = tasks.get(i).getTitle();
-                    return title;
-                }
+        for (Integer i : tasks.keySet()) {
+            if (id == i) {
+                title = tasks.get(i).getTitle();
+                return title;
             }
         }
-        if (id % 1 == 0.3) {
-            for (Double i : subtasks.keySet()) {
-                if (id == i) {
-                    title = subtasks.get(i).getTitle();
-                    return title;
-                }
+        for (Integer i : subtasks.keySet()) {
+            if (id == i) {
+                title = subtasks.get(i).getTitle();
+                return title;
             }
         }
         return title;
     }
 
-    void CreateTask(Task task) { // создание задачи п.2.4
-        task.setId(taskId + 1);
-        taskId = task.getId();
-        tasks.put(taskId, task);
+    void updateTask(Task task) { //  обновление задачи п.2.5
+        tasks.put(task.getId(), task);
+
     }
 
-    void CreateEpic(Epic epic) {  // создание эпика п.2.4
-        epic.setId(epicId + 1);
-        epicId = epic.getId();
-        epics.put(epicId, epic);
-        for (Subtask subtask : subtasksList) {
-            epic.subtasksId.add(subtask.getId());
-        }
-        subtasksList = new ArrayList<>();
-        epics.put(epicId, epic);
+    void updateEpics(Epic epic) { // обновление эпика п.2.5
+        epics.put(epic.getId(), epic);
     }
 
-    void CreateSubtask(Subtask subtask) { //создание подзадачи п.2.4
-        subtask.setId(subtaskId + 1);
-        subtaskId = subtask.getId();
-        subtasksList.add(subtask);
-        subtasks.put(subtaskId, subtask);
+    void updateSubtasks(Subtask subtask) { // обновление подзадачи п.2.5
+        subtasks.put(subtask.getId(), subtask);
     }
 
-
-    void updateTask(Double id, Task task) { //  обновление задачи п.2.5
-        task.setId(id);
-        tasks.put(id, task);
-    }
-
-    void updateEpics(Double id, Epic epic) { // обновление эпика п.2.5
-        epic.setId(id);
-        epics.put(id, epic);
-    }
-
-    void updateSubtasks(Double id, Subtask subtask) {// обновление подзадачи п.2.5 и п.4
-        subtask.setId(id);
-        subtasks.put(id, subtask);
-        boolean l = true; // п.4
-        if (Objects.equals(subtask.getStatus(), "DONE")) { // если у подзадачи статус DONE то
-            for (Epic epic : epics.values()) { // проходим циклом по мапе эпика и ищем эпик в котором есть эта подзадача
-                if (epic.subtasksId.contains(id)) { // если нашли эпик содержайщий id подзадачи
-
-                    for (Double idSubtask : epic.subtasksId) { // проходим по всему списку id подзадач этого эпика
-
-                        for (Double j : subtasks.keySet()) { // и с равниваем с ключом  мапы подзадач
-                            if (idSubtask.equals(j)) { // если нашли id из списка то смотрим его статус;
-                                if (!subtasks.get(j).getStatus().equals("DONE")) {
-                                    l = false; // если хоть одина подзадача не имеет статус "DONE" то l=false
-                                }
-                            }
-
-                        }
+    public void fillEpicStatus(int epicId) {//если я Вас правильно понял, метод одновления статуса эпика принимает id эпика?
+        boolean l = true;
+        for (Integer i : epics.get(epicId).getSubtasksID()) { // прохожу циклом по списку подзадач эпика
+            for (Integer j : subtasks.keySet()) {  // и с равниваем с ключом  мапы подзадач
+                if (Objects.equals(i, j)) {
+                    if (!subtasks.get(j).getStatus().equals("DONE")) { // проверяю статус подзадачи (если хоть у одной подзадаче статус не == "DONE":
+                        l = false;
                     }
-                }
-                if (l) { // если l остался равен true то меняем статус эпика
-                    epic.setStatus("DONE");
                 }
             }
         }
-    }
+        if (l) { // если l остался равен true то меняем статус эпика
+            epics.get(epicId).setStatus("DONE");
+        }
 
-    void removeForTask(Double id) { // удаление задач по id п.2.6
+    }
+    void removeForTask(Integer id) { // удаление задач по id п.2.6
         tasks.remove(id);
     }
 
-    void removeForIdEpic(Double id) { // удаление эпика по id п.2.6
+    void removeForIdEpic(Integer id) { // удаление эпика по id п.2.6
         epics.remove(id);
+        for (Integer i : subtasks.keySet()) {
+            if (subtasks.get(i).getEpicID() == id) {
+                subtasks.remove(i);
+            }
+        }
     }
 
-    void removeForSubtasks(Double id) { // удаление подзадачи по id п.2.6
+    void removeForSubtasks(Integer id) { // удаление подзадачи по id п.2.6
         subtasks.remove(id); // удаляю подзадачу из мапы подзадач
-        for (Double i : epics.keySet()) { // прохожжу циклом по значениям мапы эпика, чтобы удалить из него id
-            for (int j = 0; j < epics.get(i).subtasksId.size(); j++) { // прохожу по списку id подзадач в каждом эпике
-                if (epics.get(i).subtasksId.get(j).equals(id)) {
-                    epics.get(i).subtasksId.remove(id); // удаляем id из хэш мапы
+        for (Integer i : epics.keySet()) { // прохожжу циклом по значениям мапы эпика, чтобы удалить из него id
+            for (int j = 0; j < epics.get(i).getSubtasksID().size(); j++) { // прохожу по списку id подзадач в каждом эпике
+                if (epics.get(i).getSubtasksID().get(j).equals(id)) {
+                    epics.get(i).getSubtasksID().remove(id); // удаляем id из хэш мапы
                 }
             }
         }
     }
 
-
-    ArrayList<String> getSubtask(Epic epic) { // получение подзадач эпика п.3.1
-        ArrayList<String> titleSubtask = new ArrayList<>();
-        for (Epic i : epics.values()) {// проходим циклом по значениям мапы эпика
-            if (i.equals(epic)) {// если принятый эпик равен эпикку в мапе то создаем список id одзадач эпика:
-                ArrayList<Double> id = epic.subtasksId;
-                for (Double j : subtasks.keySet()) { // прохожу по ключам мапы подзадач
-                    for (Double k : id) { // прохожу по списку id
-                        if (Objects.equals(j, k)) { // сравниваю ключ мапы подзадач с  каждым элементом из списка id если равны:
-                            titleSubtask.add(subtasks.get(j).getTitle());// то записываю наименование задачи в titleSubtask
-                        }
-                    }
+    ArrayList<Subtask> getSubtasksList(Epic epic) { // получение подзадач эпика п.3.1
+        ArrayList<Subtask> subtaskList = new ArrayList<>();
+        for (Integer i : epic.getSubtasksID()) {
+            for (Integer j : subtasks.keySet()) {
+                if (i.equals(j)) {
+                    subtaskList.add(subtasks.get(j));
                 }
             }
         }
-        return titleSubtask; // возвращаю список с названием позадач
+        return subtaskList;
     }
 }
-
-
 
 
 

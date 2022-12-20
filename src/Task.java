@@ -2,7 +2,7 @@ import java.util.Objects;
 
 public class Task {
     private String title; //Название, кратко описывающее суть задачи
-    private double id; //Уникальный идентификационный номер задачи, по которому её можно будет найти
+    private int id; //Уникальный идентификационный номер задачи, по которому её можно будет найти
     // Для генерации идентификаторов можно использовать числовое поле класса менеджер, увеличивая его на 1, когда нужно получить новое значение.
     private String status; // Статус, отображающий её прогресс
     private String description; // описание
@@ -22,11 +22,11 @@ public class Task {
         this.title = title;
     }
 
-    public double getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(double id) {
+    public void setId(int id) {
         this.id = id;
     }
 
