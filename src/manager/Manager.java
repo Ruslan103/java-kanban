@@ -1,3 +1,5 @@
+package manager;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -17,8 +19,8 @@ public class Manager {
     }
 
     public Integer createSubtasks(Subtask subtask) {
-        for (Integer i:epics.keySet()){
-            if (i==subtask.getEpicID()) {
+        for (Integer i : epics.keySet()) {
+            if (i == subtask.getEpicID()) {
                 subtask.setId(id + 1);
                 id = subtask.getId();
                 subtasks.put(id, subtask);
@@ -36,8 +38,8 @@ public class Manager {
         return id;
     }
 
-    //    ArrayList<Epic> getEpics() { // метод для вывода  эпиков (п.2.1 ТЗ)
-//        ArrayList<Epic> epicsList = new ArrayList<>();
+    //    ArrayList<manager.Epic> getEpics() { // метод для вывода  эпиков (п.2.1 ТЗ)
+//        ArrayList<manager.Epic> epicsList = new ArrayList<>();
 //        for (Integer i: epics.keySet()) {
 //            epicsList.add(epics.get(i));
 //        }
@@ -113,8 +115,8 @@ public class Manager {
         if (l) { // если l остался равен true то меняем статус эпика
             epics.get(epicId).setStatus("DONE");
         }
-
     }
+
     void removeForTask(Integer id) { // удаление задач по id п.2.6
         tasks.remove(id);
     }

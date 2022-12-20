@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+package manager;
 
 public class Subtask extends Task { //Для каждой подзадачи известно, в рамках какого эпика она выполняется.
 
