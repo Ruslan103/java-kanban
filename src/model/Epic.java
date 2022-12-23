@@ -1,7 +1,5 @@
 package model;
 
-import model.Task;
-
 import java.util.ArrayList;
 
 public class Epic extends Task {//Каждый эпик знает, какие подзадачи в него входят //
@@ -21,7 +19,11 @@ public class Epic extends Task {//Каждый эпик знает, какие �
         this.subtasksID = subtasks;
     }
 
-    public void SubtaskID(int id) {
+    public void addSubtaskID(int id) {
         subtasksID.add(id);
+    }
+
+    public void removeSubtask(int subtaskId) {
+        subtasksID.remove(Integer.valueOf(subtaskId)); // одельная благодарность за valueOf пришлось перечитывать всё заново чтобы понять что это))а то я до конца не понимал зачем нам эта упаковка
     }
 }
