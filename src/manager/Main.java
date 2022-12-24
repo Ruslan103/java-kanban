@@ -3,8 +3,6 @@ package manager;
 import model.Epic;
 import model.Subtask;
 
-import java.util.Scanner;
-
 public class Main {
     public static void main(String[] args) {
         Manager manager = new Manager();
@@ -19,11 +17,11 @@ public class Main {
 
         manager.createEpic(epic);
         manager.createEpic(epic2);
-        manager.createSubtasks(subtask1);
-        manager.createSubtasks(subtask2);
-        manager.createSubtasks(subtask3);
-        manager.createSubtasks(subtask4);
-        manager.updateEpics(epic3);
-        manager.removeForSubtasks(4);
+        manager.createSubtask(subtask1);
+        manager.createSubtask(subtask2);
+        manager.createSubtask(subtask3);
+        manager.createSubtask(subtask4);
+        manager.updateEpic(epic3);
+        manager.removeForIdSubtasks(11);
     }
 }

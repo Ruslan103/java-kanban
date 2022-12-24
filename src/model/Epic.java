@@ -2,8 +2,7 @@ package model;
 
 import java.util.ArrayList;
 
-public class Epic extends Task {//Каждый эпик знает, какие подзадачи в него входят //
-    //Завершение всех подзадач эпика считается завершением эпика.
+public class Epic extends Task {
     private ArrayList<Integer> subtasksID;
 
     public Epic(String title, String description, String status) {
@@ -24,6 +23,6 @@ public class Epic extends Task {//Каждый эпик знает, какие �
     }
 
     public void removeSubtask(int subtaskId) {
-        subtasksID.remove(Integer.valueOf(subtaskId)); // одельная благодарность за valueOf пришлось перечитывать всё заново чтобы понять что это))а то я до конца не понимал зачем нам эта упаковка
+        subtasksID.remove(Integer.valueOf(subtaskId));
     }
 }

@@ -1,7 +1,5 @@
 package model;
 
-import model.Task;
-
 public class Subtask extends Task { //Для каждой подзадачи известно, в рамках какого эпика она выполняется.
     private int EpicID;
 
@@ -17,6 +15,4 @@ public class Subtask extends Task { //Для каждой подзадачи и�
     public void setEpicID(int epicID) {
         EpicID = epicID;
     }
-
-
 }
