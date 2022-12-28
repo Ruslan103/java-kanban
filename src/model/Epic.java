@@ -1,11 +1,13 @@
 package model;
 
+import manager.Status;
+
 import java.util.ArrayList;
 
 public class Epic extends Task {
     private ArrayList<Integer> subtasksID;
 
-    public Epic(String title, String description, String status) {
+    public Epic(String title, String description, Status status) {
         super(title, description, status);
         this.subtasksID = new ArrayList<>();
     }

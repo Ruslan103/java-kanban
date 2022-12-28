@@ -1,9 +1,11 @@
 package model;
 
+import manager.Status;
+
 public class Subtask extends Task { //Для каждой подзадачи известно, в рамках какого эпика она выполняется.
     private int EpicID;
 
-    public Subtask(String title, String description, String status, int epicID) {
+    public Subtask(String title, String description, Status status, int epicID) {
         super(title, description, status);
         EpicID = epicID;
     }

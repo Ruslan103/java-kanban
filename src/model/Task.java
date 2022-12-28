@@ -1,13 +1,15 @@
 package model;
 
+import manager.Status;
+
 public class Task {
     private String title; //Название, кратко описывающее суть задачи
     private int id; //Уникальный идентификационный номер задачи, по которому её можно будет найти
     // Для генерации идентификаторов можно использовать числовое поле класса менеджер, увеличивая его на 1, когда нужно получить новое значение.
-    private String status; // Статус, отображающий её прогресс
+    private Status status; // Статус, отображающий её прогресс
     private String description; // описание
 
-    public Task(String title, String description, String status) {
+    public Task(String title, String description, Status status) {
         this.title = title;
         this.id = id;
         this.status = status;
@@ -30,11 +32,11 @@ public class Task {
         this.id = id;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 

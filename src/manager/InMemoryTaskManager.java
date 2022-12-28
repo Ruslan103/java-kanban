@@ -6,14 +6,20 @@ import model.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
-public class Manager {
+import static manager.Status.*;
+
+class InMemoryTaskManager implements TaskManager {
     private int id = 0;
     private final HashMap<Integer, Epic> epics = new HashMap<>(); // мапа с эпиком и его подзадачами
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private final HashMap<Integer, Task> tasks = new HashMap<>(); // список с задачами
+    HistoryManager historyManager = new InMemoryHistoryManager();
 
     // создание эпика п.2.4
+    @Override
     public int createEpic(Epic epic) {
         id++;
         epic.setId(id);
@@ -21,6 +27,7 @@ public class Manager {
         return id;
     }
 
+    @Override
     public Integer createSubtask(Subtask subtask) {
         if (!epics.containsKey(subtask.getEpicID())) {
             return null;
@@ -34,6 +41,7 @@ public class Manager {
         return id;
     }
 
+    @Override
     // создание задачи п.2.4
     public int createTask(Task task) {
         id++;
@@ -42,20 +50,25 @@ public class Manager {
         return id;
     }
 
+    @Override
     // метод для вывода  эпиков (п.2.1 ТЗ)
     public ArrayList<Epic> getEpics() {
+
         return new ArrayList<>(epics.values());
     }
 
+    @Override
     public ArrayList<Task> getTask() { // метод для вывода названия задач (п.2.1 ТЗ)
         return new ArrayList<>(tasks.values());
     }
 
+    @Override
     // метод для вывода названия задач (п.2.1 ТЗ)
     public ArrayList<Subtask> getSubtasks() {
         return new ArrayList<>(subtasks.values());
     }
 
+    @Override
     // удаление всех задач (п.2.2 ТЗ)
     public void clearAllTasks() {
         epics.clear();
@@ -63,18 +76,41 @@ public class Manager {
         subtasks.clear();
     }
 
+    @Override
     public void clearTasks() {
         tasks.clear();
     }
 
+    @Override
     public void clearEpics() {
         epics.clear();
     }
 
+    @Override
     public void clearSubtasks() {
         subtasks.clear();
     }
 
+    @Override
+    public Task getTaskForId(int id) { //п.2.3
+        historyManager.add(tasks.get(id)); // проверяю размер списка просмотра истории
+        return tasks.get(id);
+
+    }
+
+    @Override
+    public Subtask getSubtaskForId(int id) {//п.2.3
+        historyManager.add(subtasks.get(id));
+        return subtasks.get(id);
+    }
+
+    @Override
+    public Epic getEpicForId(int id) {//п.2.3
+        historyManager.add(epics.get(id));
+        return epics.get(id);
+    }
+
+    @Override
     //  обновление задачи п.2.5
     public void updateTask(Task task) {
         if (!tasks.containsKey(task.getId())) {
@@ -83,6 +119,7 @@ public class Manager {
         tasks.put(task.getId(), task);
     }
 
+    @Override
     // обновление эпика п.2.5
     public void updateEpic(Epic epic) {
         if (!epics.containsKey(epic.getId())) {
@@ -94,6 +131,7 @@ public class Manager {
         epics.put(epic.getId(), newEpic);
     }
 
+    @Override
     // обновление подзадачи п.2.5
     public void updateSubtask(Subtask subtask) {
         if (!subtasks.containsValue(subtask)) {
@@ -110,28 +148,29 @@ public class Manager {
         Epic epic = epics.get(epicID);
         ArrayList<Integer> subtaskIds = epic.getSubtasksID();
         if (subtaskIds.isEmpty()) {
-            epic.setStatus("NEW");
+            epic.setStatus(NEW);
             return;
         }
         for (Integer i : epic.getSubtasksID()) { // прохожу циклом по списку id подзадач в эпике
             if (subtasks.containsKey(i)) {
-                if (subtasks.get(i).getStatus().equals("IN_PROGRESS")) { // если хоть у одной подзадачи статус в процессе
+                if (subtasks.get(i).getStatus().equals(IN_PROGRESS)) { // если хоть у одной подзадачи статус в процессе
                     isStatusProgress = true;
                 }
-                if (subtasks.get(i).getStatus().equals("NEW")) {
+                if (subtasks.get(i).getStatus().equals(NEW)) {
                     isStatusNew = true;
                 }
             }
         }
         if (isStatusProgress) {
-            epic.setStatus("IN_PROGRESS");
+            epic.setStatus(IN_PROGRESS);
         } else if (isStatusNew) {
-            epic.setStatus("NEW");
+            epic.setStatus(NEW);
         } else {
-            epic.setStatus("DONE");
+            epic.setStatus(DONE);
         }
     }
 
+    @Override
     // удаление задач по id п.2.6
     public void removeForIdTask(Integer id) {
         if (!tasks.containsKey(id)) {
@@ -140,6 +179,7 @@ public class Manager {
         tasks.remove(id);
     }
 
+    @Override
     // удаление эпика по id п.2.6
     public void removeForIdEpic(Integer id) {
         if (!epics.containsKey(id)) {
@@ -151,6 +191,7 @@ public class Manager {
         epics.remove(id);
     }
 
+    @Override
     // удаление подзадачи по id п.2.6
     public void removeForIdSubtasks(Integer id) {
         if (!subtasks.containsKey(id)) {
@@ -163,6 +204,7 @@ public class Manager {
         fillEpicStatus(epicID);
     }
 
+    @Override
     // получение подзадач эпика п.3.1
     public ArrayList<Subtask> getSubtasksList(Epic epic) {
         ArrayList<Subtask> subtaskList = new ArrayList<>();
@@ -170,5 +212,10 @@ public class Manager {
             subtaskList.add(subtasks.get(subtaskId));
         }
         return subtaskList;
+    }
+
+    @Override
+    public List<Task> getHistory() {
+        return historyManager.getHistory();
     }
 }
