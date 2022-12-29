@@ -1,7 +1,5 @@
 package model;
 
-import manager.Status;
-
 public class Task {
     private String title; //Название, кратко описывающее суть задачи
     private int id; //Уникальный идентификационный номер задачи, по которому её можно будет найти

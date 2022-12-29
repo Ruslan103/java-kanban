@@ -1,7 +1,5 @@
 package model;
 
-import manager.Status;
-
 public class Subtask extends Task { //Для каждой подзадачи известно, в рамках какого эпика она выполняется.
     private int EpicID;
 
