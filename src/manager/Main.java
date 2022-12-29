@@ -5,9 +5,8 @@ import model.Subtask;
 
 public class Main {
     public static void main(String[] args) {
-        // InMemoryTaskManager manager = new InMemoryTaskManager();
-        TaskManager manager = new InMemoryTaskManager();
 
+        TaskManager manager = new InMemoryTaskManager();
 
         Epic epic = new Epic("title1", "description1", Status.NEW);
         Epic epic2 = new Epic("title2", "description2", Status.NEW);

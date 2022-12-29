@@ -15,12 +15,12 @@ public interface TaskManager {
     int createTask(Task task);
 
     // метод для вывода  эпиков (п.2.1 ТЗ)
-    ArrayList<Epic> getEpics();
+    List<Epic> getEpics();
 
-    ArrayList<Task> getTask();
+    List<Task> getTask();
 
     // метод для вывода названия задач (п.2.1 ТЗ)
-    ArrayList<Subtask> getSubtasks();
+    List<Subtask> getSubtasks();
 
     // удаление всех задач (п.2.2 ТЗ)
     Task getTaskForId(int id);
