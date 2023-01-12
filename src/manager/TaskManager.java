@@ -58,5 +58,5 @@ public interface TaskManager {
     // получение подзадач эпика п.3.1
     ArrayList<Subtask> getSubtasksList(Epic epic);
 
-    List<Task> getHistory();
+    ArrayList<Node<Task>> getHistory();
 }
