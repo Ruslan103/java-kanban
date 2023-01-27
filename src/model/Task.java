@@ -45,4 +45,12 @@ public class Task {
     public void setDescription(String description) {
         this.description = description;
     }
+    @Override
+    public String toString(){
+        if (title==null){
+            return null;
+        }
+        return title +" id -"+id;
+
+    }
 }

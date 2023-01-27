@@ -2,14 +2,47 @@ package manager;
 
 import model.Task;
 
-class Node<T> { // узел
-    public Task task; // задача
-    public Node<T> next; // ссылка на следующий элемент
-    public Node<T> prev; // ссылка на предидущий элемент
+class Node { // узел
+    private Task task; // задача
+    private Node next; // ссылка на следующий элемент
+    private Node prev; // ссылка на предидущий элемент
 
-    public Node(Node<T> prev, Task task, Node<T> next) {
+    public Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
+    }
+
+    public Node getNext() {
+        return next;
+    }
+
+    public void setNext(Node next) {
+        this.next = next;
+    }
+
+    public Node getPrev() {
+        return prev;
+    }
+
+    public void setPrev(Node prev) {
+        this.prev = prev;
+    }
+
+    public Node(Node prev, Task task, Node next) {
         this.task = task;
         this.next = next;
         this.prev = prev;
+    }
+
+    @Override
+    public String toString(){
+        if (task==null){
+            return null;
+        }
+        return task.getTitle()+" id="+task.getId();
+
     }
 }

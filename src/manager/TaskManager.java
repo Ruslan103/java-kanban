@@ -56,7 +56,7 @@ public interface TaskManager {
     void removeForIdSubtasks(Integer id);
 
     // получение подзадач эпика п.3.1
-    ArrayList<Subtask> getSubtasksList(Epic epic);
+    List<Subtask> getSubtasksList(Epic epic);
 
-    ArrayList<Node<Task>> getHistory();
+    List<Task> getHistory();
 }
