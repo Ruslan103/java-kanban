@@ -1,4 +1,4 @@
-package manager;
+package history;
 
 import model.Task;
 
@@ -35,14 +35,5 @@ class Node { // узел
         this.task = task;
         this.next = next;
         this.prev = prev;
-    }
-
-    @Override
-    public String toString(){
-        if (task==null){
-            return null;
-        }
-        return task.getTitle()+" id="+task.getId();
-
     }
 }

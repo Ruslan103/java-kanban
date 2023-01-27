@@ -1,4 +1,4 @@
-package manager;
+package history;
 
 import model.Task;
 
@@ -8,11 +8,10 @@ import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private final CustomLinkedList<Task> customLinkedList = new CustomLinkedList();
+    private final CustomLinkedList customLinkedList = new CustomLinkedList();
 
     // реализацию двусвязного списка задач
-    private static class CustomLinkedList<T> {
-        //private static final int SIZE_LIST = 10;
+    private static class CustomLinkedList {
         private Node head; // ссылка на первый элемент
         private Node prev; // ссылка на последний элемент
         private int size = 0;
@@ -53,35 +52,29 @@ public class InMemoryHistoryManager implements HistoryManager {
             if (node == null) {
                 return;
             }
-                Node nodeNext = null;
-                Node nodePrev = null;
-                if (node.getNext() != null) {
-                    nodeNext = node.getNext();
-                }
-                if (node.getPrev() != null) {
-                    nodePrev = node.getPrev();
-                }
-                if (nodePrev != null) {
-                    nodePrev.setNext(nodeNext);
-                }
-
-                if (nodeNext != null) {
-                    nodeNext.setPrev(nodePrev);
-                }
-                if (node.getPrev() == null) {
-                    head = node.getNext();
-                }
-
-                node.setNext(null);
-                node.setTask(null);
-                node.setPrev(null);
-                size--;
+            Node nodeNext = null;
+            Node nodePrev = null;
+            if (node.getNext() != null) {
+                nodeNext = node.getNext();
             }
-
-
-
+            if (node.getPrev() != null) {
+                nodePrev = node.getPrev();
+            }
+            if (nodePrev != null) {
+                nodePrev.setNext(nodeNext);
+            }
+            if (nodeNext != null) {
+                nodeNext.setPrev(nodePrev);
+            }
+            if (node.getPrev() == null) {
+                head = node.getNext();
+            }
+            node.setNext(null);
+            node.setTask(null);
+            node.setPrev(null);
+            size--;
+        }
     }
-
 
     // метод обновления списка истории
     public void add(Task task) {
@@ -95,11 +88,9 @@ public class InMemoryHistoryManager implements HistoryManager {
         customLinkedList.linkLast(task); // добавление задачи в список истории
     }
 
-
     // удаление задачи по id из истории просмотров ТЗ 5
     @Override
     public void removeForId(int id) {
-
         Node node = customLinkedList.history.get(id); // элемент в двусвязном списке
         customLinkedList.removeNode(node); // удаление элемента из двусвязного списка
         customLinkedList.history.remove(id);

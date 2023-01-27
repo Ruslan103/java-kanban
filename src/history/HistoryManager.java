@@ -1,9 +1,5 @@
-package manager;
-
+package history;
 import model.Task;
-
-
-import java.util.ArrayList;
 import java.util.List;
 
 public interface HistoryManager {
@@ -11,7 +7,6 @@ public interface HistoryManager {
 
     // удаление из истории просмотров по id ТЗ 5
     void removeForId(int id);
-
 
     List<Task> getHistory();
 }

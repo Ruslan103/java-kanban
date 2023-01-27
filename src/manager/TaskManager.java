@@ -3,17 +3,12 @@ package manager;
 import model.Epic;
 import model.Subtask;
 import model.Task;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
-    int createEpic(Epic epic);
-
+    Integer createEpic(Epic epic);
     Integer createSubtask(Subtask subtask);
-
-    int createTask(Task task);
-
+    Integer createTask(Task task);
     // метод для вывода  эпиков (п.2.1 ТЗ)
     List<Epic> getEpics();
 

@@ -9,7 +9,6 @@ public class Main {
 
         TaskManager manager = new InMemoryTaskManager();
 
-
         Epic epic = new Epic("epic1", "description1", Status.NEW);
         Epic epic2 = new Epic("epic2", "description2", Status.NEW);
         Epic epic3 = new Epic("epic3", "description3", Status.NEW);
@@ -30,13 +29,13 @@ public class Main {
         manager.getEpicForId(2);
         manager.getEpicForId(1);
         manager.getSubtaskForId(4);
-        manager.getSubtaskForId (5);
+        manager.getSubtaskForId(5);
         manager.getSubtaskForId(3);
         manager.getSubtaskForId(6);
        // manager.removeForIdEpic(1);
-       manager.clearAllTasks();
+        // manager.clearAllTasks();
        //manager.clearEpics();
         manager.getHistory();
-      System.out.println(manager.getHistory());
+        System.out.println(manager.getHistory());
     }
 }
