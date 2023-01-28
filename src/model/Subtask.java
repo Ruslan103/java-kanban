@@ -1,18 +1,18 @@
 package model;
 
 public class Subtask extends Task { //Для каждой подзадачи известно, в рамках какого эпика она выполняется.
-    private int EpicID;
+    private int epicID;
 
     public Subtask(String title, String description, Status status, int epicID) {
         super(title, description, status);
-        EpicID = epicID;
+        this.epicID = epicID;
     }
 
     public int getEpicID() {
-        return EpicID;
+        return epicID;
     }
 
     public void setEpicID(int epicID) {
-        EpicID = epicID;
+        this.epicID = epicID;
     }
 }

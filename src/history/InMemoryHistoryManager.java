@@ -13,14 +13,14 @@ public class InMemoryHistoryManager implements HistoryManager {
     // реализацию двусвязного списка задач
     private static class CustomLinkedList {
         private Node head; // ссылка на первый элемент
-        private Node prev; // ссылка на последний элемент
+        private Node tail; // ссылка на последний элемент
         private int size = 0;
         private final HashMap<Integer, Node> history = new HashMap<>();
 
         public void linkLast(Task task) {
-            final Node oldTail = prev; // сохраняю ссылку на последний элемент
-            final Node newNode = new Node(prev, task, null); // т.к. новый элемент последний то next =null
-            prev = newNode;
+            final Node oldTail = tail; // сохраняю ссылку на последний элемент
+            final Node newNode = new Node(tail, task, null); // т.к. новый элемент последний то next =null
+            tail = newNode;
             if (oldTail == null) {// если в списке нет задач
                 head = newNode;
             } else {
@@ -33,16 +33,10 @@ public class InMemoryHistoryManager implements HistoryManager {
         // получение списка задач из мапы
         public List<Task> getTasks() {
             List<Task> nodeList = new ArrayList<>();
-            Node nextNode = null;
-            for (Node node : history.values()) { // находим первую просмотренную задачу
-                if (node.getPrev() == null) {
-                    nodeList.add(node.getTask());
-                    nextNode = node.getNext();
-                }
-                while (nextNode != null) {
-                    nodeList.add(nextNode.getTask());
-                    nextNode = nextNode.getNext();
-                }
+            Node nextNode = head;
+            while (nextNode != null) {
+                nodeList.add(nextNode.getTask());
+                nextNode = nextNode.getNext();
             }
             return nodeList;
         }
@@ -52,14 +46,8 @@ public class InMemoryHistoryManager implements HistoryManager {
             if (node == null) {
                 return;
             }
-            Node nodeNext = null;
-            Node nodePrev = null;
-            if (node.getNext() != null) {
-                nodeNext = node.getNext();
-            }
-            if (node.getPrev() != null) {
-                nodePrev = node.getPrev();
-            }
+            Node nodeNext = node.getNext();
+            Node nodePrev = node.getPrev();
             if (nodePrev != null) {
                 nodePrev.setNext(nodeNext);
             }
@@ -68,6 +56,9 @@ public class InMemoryHistoryManager implements HistoryManager {
             }
             if (node.getPrev() == null) {
                 head = node.getNext();
+            }
+            if (node.getNext() == null) {
+                tail = node.getPrev();
             }
             node.setNext(null);
             node.setTask(null);

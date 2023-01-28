@@ -11,7 +11,7 @@ import java.util.List;
 
 import static model.Status.*;
 
-class InMemoryTaskManager implements TaskManager {
+public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Epic> epics = new HashMap<>(); // мапа с эпиком и его подзадачами
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private final HashMap<Integer, Task> tasks = new HashMap<>(); // список с задачами
