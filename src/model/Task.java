@@ -1,5 +1,7 @@
 package model;
 
+import static history.TypeTask.TASK;
+
 public class Task {
     private String title; //Название, кратко описывающее суть задачи
     private int id; //Уникальный идентификационный номер задачи, по которому её можно будет найти
@@ -45,4 +47,9 @@ public class Task {
     public void setDescription(String description) {
         this.description = description;
     }
+    @Override
+    public String toString() {
+        return  id+","+TASK+","+getTitle()+","+status+","+description;
+    }
+
 }

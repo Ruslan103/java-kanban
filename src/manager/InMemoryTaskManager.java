@@ -1,10 +1,12 @@
 package manager;
 
 import history.HistoryManager;
+import history.ManagerSaveException;
 import model.Epic;
 import model.Subtask;
 import model.Task;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,25 +14,32 @@ import java.util.List;
 import static model.Status.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final HashMap<Integer, Epic> epics = new HashMap<>(); // мапа с эпиком и его подзадачами
-    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    private final HashMap<Integer, Task> tasks = new HashMap<>(); // список с задачами
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
+    protected final HashMap<Integer, Epic> epics = new HashMap<>(); // мапа с эпиком и его подзадачами
+    protected final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    protected final HashMap<Integer, Task> tasks = new HashMap<>(); // список с задачами
+    protected final HistoryManager historyManager = Managers.getDefaultHistory();
     private int id = 0;
 
-    // создание эпика п.2.4
-    @Override
-    public Integer createEpic(Epic epic) {
-        id++;
-        epic.setId(id);
-        epics.put(id, epic);
+    public int getId() {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    // создание эпика п.2.4
     @Override
-    public Integer createSubtask(Subtask subtask) {
+    public void createEpic(Epic epic) {
+        id++;
+        epic.setId(id);
+        epics.put(id, epic);
+    }
+
+    @Override
+    public void createSubtask(Subtask subtask){
         if (!epics.containsKey(subtask.getEpicID())) {
-            return null;
+            return;
         }
         id++;
         subtask.setId(id);
@@ -38,16 +47,16 @@ public class InMemoryTaskManager implements TaskManager {
         int epicID = subtask.getEpicID();
         epics.get(epicID).addSubtaskID(id);
         fillEpicStatus(epicID);
-        return id;
+       // return id;
     }
 
     // создание задачи п.2.4
     @Override
-    public Integer createTask(Task task) {
+    public void createTask(Task task) {
         id++;
         task.setId(id);
         tasks.put(id, task);
-        return id;
+       // return id;
     }
 
     // метод для вывода  эпиков (п.2.1 ТЗ)
@@ -224,7 +233,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     // удаление подзадачи по id п.2.6
     @Override
-    public void removeForIdSubtasks(Integer id) {
+    public void removeForIdSubtask(Integer id) {
         if (!subtasks.containsKey(id)) {
             return;
         }

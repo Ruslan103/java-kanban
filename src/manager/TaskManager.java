@@ -1,15 +1,18 @@
 package manager;
 
+import history.ManagerSaveException;
 import model.Epic;
 import model.Subtask;
 import model.Task;
+
+import java.io.IOException;
 import java.util.List;
 
 public interface TaskManager {
-    Integer createEpic(Epic epic);
-    Integer createSubtask(Subtask subtask);
-    Integer createTask(Task task);
-    // метод для вывода  эпиков (п.2.1 ТЗ)
+    void createEpic(Epic epic);
+    void createSubtask(Subtask subtask);
+    void createTask(Task task);
+    // метод для вывода эпиков (п.2.1 ТЗ)
     List<Epic> getEpics();
 
     List<Task> getTask();
@@ -48,7 +51,7 @@ public interface TaskManager {
     void removeForIdEpic(Integer id);
 
     // удаление подзадачи по id п.2.6
-    void removeForIdSubtasks(Integer id);
+    void removeForIdSubtask(Integer id);
 
     // получение подзадач эпика п.3.1
     List<Subtask> getSubtasksList(Epic epic);
