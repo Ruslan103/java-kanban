@@ -1,7 +1,6 @@
 package model;
 
-import static history.TypeTask.SUBTASK;
-import static history.TypeTask.TASK;
+import static model.TypeTask.SUBTASK;
 
 public class Subtask extends Task { //Для каждой подзадачи известно, в рамках какого эпика она выполняется.
     private int epicID;
@@ -18,8 +17,8 @@ public class Subtask extends Task { //Для каждой подзадачи и�
     public void setEpicID(int epicID) {
         this.epicID = epicID;
     }
-    @Override
-    public String toString() {
+
+    public String toStringSubtask() {
         return  getId() +","+SUBTASK+","+getTitle()+","+ getStatus() +","+ getDescription()+","+epicID;
     }
 }

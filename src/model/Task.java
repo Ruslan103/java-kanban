@@ -1,6 +1,6 @@
 package model;
 
-import static history.TypeTask.TASK;
+import static model.TypeTask.TASK;
 
 public class Task {
     private String title; //Название, кратко описывающее суть задачи
@@ -47,8 +47,8 @@ public class Task {
     public void setDescription(String description) {
         this.description = description;
     }
-    @Override
-    public String toString() {
+
+    public String toStringTask() {
         return  id+","+TASK+","+getTitle()+","+status+","+description;
     }
 

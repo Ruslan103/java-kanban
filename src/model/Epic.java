@@ -2,8 +2,7 @@ package model;
 
 import java.util.ArrayList;
 
-import static history.TypeTask.EPIC;
-import static history.TypeTask.SUBTASK;
+import static model.TypeTask.EPIC;
 
 public class Epic extends Task {
     private ArrayList<Integer> subtasksID;
@@ -28,8 +27,8 @@ public class Epic extends Task {
     public void removeSubtask(int subtaskId) {
         subtasksID.remove(Integer.valueOf(subtaskId));
     }
-    @Override
-    public String toString() {
+
+    public String toStringEpic() {
         return  getId() +","+EPIC+","+getTitle()+","+ getStatus() +","+ getDescription();
     }
 }
