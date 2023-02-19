@@ -18,7 +18,8 @@ public class Subtask extends Task { //Для каждой подзадачи и�
         this.epicID = epicID;
     }
 
-    public String toStringSubtask() {
-        return  getId() +","+SUBTASK+","+getTitle()+","+ getStatus() +","+ getDescription()+","+epicID;
+    @Override
+    public TypeTask getType() {
+        return TypeTask.SUBTASK;
     }
 }

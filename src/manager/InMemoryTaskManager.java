@@ -1,12 +1,10 @@
 package manager;
 
 import history.HistoryManager;
-import history.ManagerSaveException;
 import model.Epic;
 import model.Subtask;
 import model.Task;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +22,7 @@ public class InMemoryTaskManager implements TaskManager {
         return id;
     }
 
-    public void setId(int id) {
+    protected void setId(int id) {
         this.id = id;
     }
 
@@ -37,7 +35,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void createSubtask(Subtask subtask){
+    public void createSubtask(Subtask subtask) {
         if (!epics.containsKey(subtask.getEpicID())) {
             return;
         }
@@ -47,7 +45,7 @@ public class InMemoryTaskManager implements TaskManager {
         int epicID = subtask.getEpicID();
         epics.get(epicID).addSubtaskID(id);
         fillEpicStatus(epicID);
-       // return id;
+        // return id;
     }
 
     // создание задачи п.2.4
@@ -56,7 +54,7 @@ public class InMemoryTaskManager implements TaskManager {
         id++;
         task.setId(id);
         tasks.put(id, task);
-       // return id;
+        // return id;
     }
 
     // метод для вывода  эпиков (п.2.1 ТЗ)

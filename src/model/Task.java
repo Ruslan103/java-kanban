@@ -48,8 +48,7 @@ public class Task {
         this.description = description;
     }
 
-    public String toStringTask() {
-        return  id+","+TASK+","+getTitle()+","+status+","+description;
+    public TypeTask getType() {
+        return TypeTask.TASK;
     }
-
 }
