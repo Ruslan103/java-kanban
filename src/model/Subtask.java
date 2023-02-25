@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 import static model.TypeTask.SUBTASK;
 
 public class Subtask extends Task { //Для каждой подзадачи известно, в рамках какого эпика она выполняется.

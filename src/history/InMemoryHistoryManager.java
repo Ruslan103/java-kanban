@@ -67,6 +67,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
+    @Override
     // метод обновления списка истории
     public void add(Task task) {
         if (task == null) {

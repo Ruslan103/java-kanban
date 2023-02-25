@@ -143,21 +143,21 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return super.getHistory();
     }
 
-    static Task taskFromString(String value) {
+    public static Task taskFromString(String value) {
         String[] tasks = value.split(",");
         Task task = new Task(tasks[2], tasks[4], Status.valueOf(tasks[3]));
         task.setId(Integer.parseInt(tasks[0]));
         return task;
     }
 
-    static Epic epicFromString(String value) {
+    public static Epic epicFromString(String value) {
         String[] epics = value.split(",");
         Epic epic = new Epic(epics[2], epics[4], Status.valueOf(epics[3]));
         epic.setId(Integer.parseInt(epics[0]));
         return epic;
     }
 
-    static Subtask subtaskFromString(String value) {
+    public static Subtask subtaskFromString(String value) {
         String[] subtasks = value.split(",");
         Subtask subtask = new Subtask(subtasks[2], subtasks[4], Status.valueOf(subtasks[3]), Integer.parseInt(subtasks[5]));
         subtask.setId(Integer.parseInt(subtasks[0]));
@@ -227,6 +227,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     manager.setId(maxId + 1);
                 } else {                          // иначе если встретилась пустая строка
                     line = bufferFile.readLine(); // считываем следующую строку - строку с id истории
+                    if (line==null){
+                        return manager;
+                    }
                     String[] id = line.split(",");
                     for (String i : id) {
                         int parseId = Integer.parseInt(i);
@@ -261,50 +264,5 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private String toStringSubtask(Subtask subtask) {
         return subtask.getId() + "," + subtask.getType() + "," + subtask.getTitle() + "," + subtask.getStatus() + "," + subtask.getDescription() + "," + subtask.getEpicID();
-    }
-
-    public static void main(String[] args) {
-
-        // первый запуск с пустым файлом
-        Epic epic1 = new Epic("epic1", "description1", Status.NEW);
-        Epic epic2 = new Epic("epic2", "description2", Status.NEW);
-        Epic epic3 = new Epic("epic3", "description3", Status.NEW);
-        Task task1 = new Task("task1", "descriptionT1", Status.NEW);
-        // epic3.setId(1);
-        Subtask subtask1 = new Subtask("subtask1", "descriptionS1", Status.NEW, 1);
-        Subtask subtask2 = new Subtask("subtask2", "descriptionS2", Status.IN_PROGRESS, 1);
-        File file = new File("resources/text_file.csv");
-        FileBackedTasksManager fileManager = loadFromFile(file);
-        fileManager.createEpic(epic1);
-        fileManager.createEpic(epic2);
-        fileManager.createEpic(epic3);
-        fileManager.createSubtask(subtask1);
-        // fileManager.createSubtask(subtask2);
-        fileManager.createTask(task1);
-        fileManager.getEpicForId(1);
-        fileManager.getTaskForId(5);
-        fileManager.getEpicForId(2);
-
-//          // второй запуск с заполненным файлом
-//        File file = new File("resources/text_file.csv");
-//        FileBackedTasksManager fileManager = loadFromFile(file);
-//        Epic epic4 = new Epic("epic4", "description4", Status.NEW);
-//        Epic epic5 = new Epic("epic5", "description5", Status.NEW);
-//        Epic epic6 = new Epic("epic6", "description6", Status.NEW);
-//        Task task2 = new Task("task2", "descriptionT2", Status.NEW);
-//        // epic3.setId(1);
-//        Subtask subtask3 = new Subtask("subtask3", "descriptionS3", Status.NEW, 1);
-//        Subtask subtask4 = new Subtask("subtask4", "descriptionS4", Status.NEW, 2);
-//        Subtask subtask5 = new Subtask("subtask5", "descriptionS5", Status.NEW, 2);
-//        Subtask subtask6 = new Subtask("subtask6", "description6", Status.NEW, 3);
-//        fileManager.createEpic(epic4);
-//        fileManager.createEpic(epic5);
-//        fileManager.createEpic(epic6);
-//        fileManager.createSubtask(subtask3);
-//        fileManager.createSubtask(subtask4);
-//        fileManager.createTask(task2);
-//        fileManager.getEpicForId(7);
-//        fileManager.getTaskForId(12);
-//        fileManager.getEpicForId(9);
     }
 }

@@ -18,7 +18,7 @@ public interface TaskManager {
     // метод для вывода названия задач (п.2.1 ТЗ)
     List<Subtask> getSubtasks();
 
-    // удаление всех задач (п.2.2 ТЗ)
+
     Task getTaskForId(int id);
 
     Subtask getSubtaskForId(int id);

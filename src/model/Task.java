@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 import static model.TypeTask.TASK;
 
 public class Task {
@@ -50,5 +52,12 @@ public class Task {
 
     public TypeTask getType() {
         return TypeTask.TASK;
+    }
+    @Override
+    public boolean equals(Object o){
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task= (Task) o;
+        return Objects.equals(title, task.title) && Objects.equals(description, task.description)&&id==task.getId()&& Objects.equals(status,task.getStatus());
     }
 }

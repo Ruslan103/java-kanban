@@ -159,16 +159,13 @@ public class InMemoryTaskManager implements TaskManager {
         if (!epics.containsKey(epic.getId())) {
             return;
         }
-        Epic newEpic = epics.get(epic.getId());
-        newEpic.setTitle(epic.getTitle()); // меняю на новое название
-        newEpic.setDescription(epic.getDescription()); // меняю на новое описание
-        epics.put(epic.getId(), newEpic);
+        epics.put(epic.getId(), epic);
     }
 
     // обновление подзадачи п.2.5
     @Override
     public void updateSubtask(Subtask subtask) {
-        if (!subtasks.containsValue(subtask)) {
+        if (!subtasks.containsKey(subtask.getId())) {
             return;
         }
         subtasks.put(subtask.getId(), subtask);
