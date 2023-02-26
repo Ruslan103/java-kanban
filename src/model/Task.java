@@ -1,8 +1,9 @@
 package model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-
-import static model.TypeTask.TASK;
 
 public class Task {
     private String title; //Название, кратко описывающее суть задачи
@@ -11,12 +12,33 @@ public class Task {
     private Status status; // Статус, отображающий её прогресс
     private String description; // описание
 
+    private long duration; //продолжительность задачи, оценка того, сколько времени она займёт в минутах (число)
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    private LocalDateTime startTime; //дата, когда предполагается приступить к выполнению задачи
+
     public Task(String title, String description, Status status) {
         this.title = title;
         this.id = id;
         this.status = status;
         this.description = description;
     }
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
 
     public String getTitle() {
         return title;
@@ -53,11 +75,17 @@ public class Task {
     public TypeTask getType() {
         return TypeTask.TASK;
     }
+
+    //время завершения задачи, которое рассчитывается исходя из startTime и duration
+    public LocalDateTime getEndTime() {
+        return startTime.plusMinutes(duration);
+    }
+
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Task task= (Task) o;
-        return Objects.equals(title, task.title) && Objects.equals(description, task.description)&&id==task.getId()&& Objects.equals(status,task.getStatus());
+        Task task = (Task) o;
+        return Objects.equals(title, task.title) && Objects.equals(description, task.description) && id == task.getId() && Objects.equals(status, task.getStatus());
     }
 }

@@ -5,9 +5,9 @@ import model.Epic;
 import model.Subtask;
 import model.Task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import static model.Status.*;
 
@@ -45,6 +45,7 @@ public class InMemoryTaskManager implements TaskManager {
         int epicID = subtask.getEpicID();
         epics.get(epicID).addSubtaskID(id);
         fillEpicStatus(epicID);
+        getEndTimeForEpic(epicID);
         // return id;
     }
 
@@ -253,5 +254,22 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
+    }
+
+    private void getEndTimeForEpic(int epicId){
+        Epic epic = getEpicForId(epicId);
+        int idFirstSubtask = epic.getSubtasksID().get(0);
+        int sizeSubtasksID=epic.getSubtasksID().size();
+        int idLostSubtask = epic.getSubtasksID().get(sizeSubtasksID-1);
+        Subtask firstSubtask = getSubtaskForId(idFirstSubtask);
+        Subtask lostSubtask = getSubtaskForId(idLostSubtask);
+        LocalDateTime startFirstSubtask=firstSubtask.getStartTime();
+        if (startFirstSubtask==null){
+            return;
+        }
+        epic.setStartTime(startFirstSubtask);
+        Duration time=Duration.between(startFirstSubtask,lostSubtask.getEndTime());
+        epic.setDuration(time.toMinutes());
+        epic.setEndTime(lostSubtask.getEndTime());
     }
 }

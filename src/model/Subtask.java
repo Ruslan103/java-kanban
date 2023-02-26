@@ -1,5 +1,6 @@
 package model;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static model.TypeTask.SUBTASK;
@@ -24,4 +25,9 @@ public class Subtask extends Task { //Для каждой подзадачи и�
     public TypeTask getType() {
         return TypeTask.SUBTASK;
     }
+
+//    @Override
+//    public LocalDateTime getEndTime() {
+//        return getStartTime().plusMinutes(getDuration());
+//    }
 }

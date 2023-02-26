@@ -8,6 +8,8 @@ import model.Task;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 abstract class TaskManagerTest<T extends TaskManager> {
@@ -326,5 +328,26 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertTrue(manager.getHistory().contains(task1), "Задача не добавлен в историю");
         Assertions.assertTrue(manager.getHistory().contains(task2), "Задача не добавлен в историю");
         Assertions.assertTrue(manager.getHistory().contains(task3), "Задача не добавлен в историю");
+    }
+
+    @Test
+    public void timeTestTask(){
+        task1.setDuration(30);
+        LocalDateTime time=LocalDateTime.of(2023,02,26,00,00);
+        LocalDateTime timeAnd =LocalDateTime.of(2023,02,26,00,30);
+        task1.setStartTime(time);
+        Assertions.assertEquals(timeAnd,task1.getEndTime(),"не верные даты");
+    }
+
+    @Test
+    public  void  timeTestEpic(){
+        LocalDateTime subtask1StartTime = LocalDateTime.of(2023,02,26,00,00) ;
+        subtask1.setStartTime(subtask1StartTime);
+        subtask1.setDuration(15);
+        LocalDateTime subtask2StartTime=LocalDateTime.of(2023,02,26,00,30);
+        subtask2.setStartTime(subtask2StartTime);
+        subtask2.setDuration(30);
+        createTasksForTestWithHistory();
+        Assertions.assertEquals(subtask2.getEndTime(),epic1.getEndTime(),"Не верная дата завершения эпика");
     }
 }

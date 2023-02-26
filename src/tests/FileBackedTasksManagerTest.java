@@ -91,7 +91,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         Assertions.assertEquals(saveSubtasks, manager.getSubtasks(), "Некорректные подзадачи в файле");
         Assertions.assertTrue(manager.getHistory().isEmpty(), "Список истории не пуст");
     }
-// тест метода save  с пустым списком задач
+// тест метода save с пустым списком задач
     @Test
     public void saveWithEmptyTaskList() {
         manager.save();
