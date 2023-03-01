@@ -1,5 +1,7 @@
 package tests;
 
+import manager.InMemoryTaskManager;
+import manager.IntersectionOfTasks;
 import manager.TaskManager;
 import model.Epic;
 import model.Status;
@@ -8,6 +10,7 @@ import model.Task;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Executable;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,7 +28,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     Subtask subtask2 = new Subtask("subtask2", "descriptionS2", Status.NEW, 1);
     Subtask subtask3 = new Subtask("subtask3", "descriptionS3", Status.NEW, 2);
 
-//метод создания задач и добавления в историю
+    //метод создания задач и добавления в историю
     protected void createTasksForTestWithHistory() {
         manager.createEpic(epic1);
         manager.createEpic(epic2);
@@ -48,7 +51,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     //метод создания задач без добавления в историю
-    protected void createTasksWithoutHistory(){
+    protected void createTasksWithoutHistory() {
         manager.createEpic(epic1); //содержит две подзадачи
         manager.createEpic(epic2);// содержит одну подзадачу
         manager.createSubtask(subtask1); // принадлежит epic1
@@ -58,6 +61,27 @@ abstract class TaskManagerTest<T extends TaskManager> {
         manager.createTask(task1);
         manager.createTask(task2);
         manager.createTask(task3);
+    }
+
+    // тест метода обновления статуса
+    @Test
+    public void fillEpicStatusTest() {
+        createTasksForTestWithHistory();
+        subtask1.setStatus(Status.DONE);  // меняем статус подзадач
+        subtask2.setStatus(Status.DONE);
+        manager.createSubtask(subtask1);
+        manager.createSubtask(subtask2);
+        Assertions.assertEquals(Status.DONE, epic1.getStatus(), "Статус эпика не DONE"); // проверка изменения статуса Эпика
+        subtask1.setStatus(Status.NEW);
+        subtask2.setStatus(Status.DONE);
+        manager.createSubtask(subtask1);
+        manager.createSubtask(subtask2);
+        Assertions.assertEquals(Status.NEW, epic1.getStatus(), "Статус эпика не NEW"); // проверка изменения статуса Эпика
+        subtask1.setStatus(Status.IN_PROGRESS);
+        subtask2.setStatus(Status.IN_PROGRESS);
+        manager.createSubtask(subtask1);
+        manager.createSubtask(subtask2);
+        Assertions.assertEquals(Status.IN_PROGRESS, epic1.getStatus(), "Статус эпика не IN_PROGRESS");
     }
 
     // тест метода createEpic
@@ -171,6 +195,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertTrue(manager.getEpics().isEmpty(), "Список эпиков не очищен");
         Assertions.assertTrue(manager.getSubtasks().isEmpty(), "Список подзадач не очищен");
         Assertions.assertTrue(manager.getHistory().isEmpty(), "Список истории не очищен");
+        Assertions.assertTrue(manager.getPrioritizedTasks().isEmpty(), "Отсортированный список не очищен");
     }
 
     @Test
@@ -247,6 +272,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         manager.removeForIdTask(task1.getId());
         Assertions.assertFalse(manager.getTask().contains(task1), "Задача не удалена");
         Assertions.assertFalse(manager.getHistory().contains(task1), "Задача не удалена из истории");
+        Assertions.assertFalse(manager.getPrioritizedTasks().contains(task1), "Задача не удалена из сортированного списка");
     }
 
     // c не верным id
@@ -289,6 +315,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         manager.removeForIdSubtask(subtask1.getId());
         Assertions.assertFalse(manager.getSubtasks().contains(subtask1), "Подзадача не удалена");
         Assertions.assertFalse(manager.getHistory().contains(subtask1), "Подзадача не удалена из истории");
+        Assertions.assertFalse(manager.getPrioritizedTasks().contains(subtask1), "Подзадача не удалена из сортированного списка");
     }
 
     @Test
@@ -330,24 +357,91 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertTrue(manager.getHistory().contains(task3), "Задача не добавлен в историю");
     }
 
+    // проверяю что у задачи корректно создаются startTime и getTime
     @Test
-    public void timeTestTask(){
+    public void starTimeAndendTimeTask() {
         task1.setDuration(30);
-        LocalDateTime time=LocalDateTime.of(2023,02,26,00,00);
-        LocalDateTime timeAnd =LocalDateTime.of(2023,02,26,00,30);
+        LocalDateTime time = LocalDateTime.of(2023, 02, 26, 00, 00);
+        LocalDateTime timeForTest = LocalDateTime.of(2023, 02, 26, 00, 30);
         task1.setStartTime(time);
-        Assertions.assertEquals(timeAnd,task1.getEndTime(),"не верные даты");
+        Assertions.assertEquals(timeForTest, task1.getEndTime(), "не верные даты");
     }
 
+    // проверяю, что у эпика startTime и getTime корректно добавляются
     @Test
-    public  void  timeTestEpic(){
-        LocalDateTime subtask1StartTime = LocalDateTime.of(2023,02,26,00,00) ;
+    public void starTimeAndendTimeEpic() {
+        LocalDateTime subtask1StartTime = LocalDateTime.of(2023, 02, 26, 00, 00);
         subtask1.setStartTime(subtask1StartTime);
         subtask1.setDuration(15);
-        LocalDateTime subtask2StartTime=LocalDateTime.of(2023,02,26,00,30);
+        LocalDateTime subtask2StartTime = LocalDateTime.of(2023, 02, 26, 00, 30);
         subtask2.setStartTime(subtask2StartTime);
         subtask2.setDuration(30);
         createTasksForTestWithHistory();
-        Assertions.assertEquals(subtask2.getEndTime(),epic1.getEndTime(),"Не верная дата завершения эпика");
+        Assertions.assertEquals(subtask1.getStartTime(), epic1.getStartTime(), "Не верная дата начала эпика");
+        Assertions.assertEquals(subtask2.getEndTime(), epic1.getEndTime(), "Не верная дата завершения эпика");
+    }
+
+    // проверяю сортировку
+    @Test
+    public void getPrioritizedTasksTest() {
+        LocalDateTime startTime1 = LocalDateTime.of(2023, 02, 26, 00, 03);//task1
+        LocalDateTime startTime2 = LocalDateTime.of(2023, 02, 26, 00, 02); //task2
+        LocalDateTime startTime3 = LocalDateTime.of(2023, 02, 26, 00, 01); // task3
+        LocalDateTime startTime4 = LocalDateTime.of(2023, 02, 26, 00, 04);// epic
+        task1.setStartTime(startTime1);
+        task2.setStartTime(startTime2);
+        task3.setStartTime(startTime3);
+        subtask1.setStartTime(startTime4); // subtask1 принадлежит epic1 и у них одинаковые start
+        createTasksForTestWithHistory();
+        int indexTask1 = manager.getPrioritizedTasks().indexOf(task1); // получаем индекс задач
+        int indexTask2 = manager.getPrioritizedTasks().indexOf(task2);
+        int indexTask3 = manager.getPrioritizedTasks().indexOf(task3);
+        int indexSubtask1 = manager.getPrioritizedTasks().indexOf(subtask1);
+        int indexSubtask2 = manager.getPrioritizedTasks().indexOf(subtask2);
+        Assertions.assertTrue(manager.getEpics().contains(epic1), "не содержит эпик"); // проверяю, что эпик не удален т.к. есть пересечение по времени с его подзадачей
+        Assertions.assertEquals(indexTask3, 0);
+        Assertions.assertEquals(indexTask2, 1);
+        Assertions.assertEquals(indexTask1, 2);
+        Assertions.assertEquals(indexSubtask1, 3);
+        Assertions.assertTrue(indexSubtask1 < indexSubtask2); //  subtask2.starTime =null, проверяем что находится после отсортированных задач
+    }
+
+    //проверяю, что задача обновится если startTime совпадает с предыдущей задачей
+    @Test
+    public void intersectionTimeOfTasksMethodeUpdateTask() {
+        LocalDateTime startTime1 = LocalDateTime.of(2023, 02, 26, 00, 00);//task1
+        Task taskTest = new Task("taskTest", "descriptionTest", Status.NEW);
+        taskTest.setId(1); // добавляю одинаковые id и startTime для task1 и taskTest
+        taskTest.setStartTime(startTime1);
+        task1.setStartTime(startTime1);
+        manager.createTask(task1);
+        manager.updateTask(taskTest);
+        Assertions.assertTrue(manager.getPrioritizedTasks().contains(taskTest), "Новая задача не содержится в списке истории");
+        Assertions.assertTrue(manager.getTask().contains(taskTest), "Новая задача не содержится в списке задач");
+    }
+
+    //проверяю что задача не добавляются задачи с одинаковым временем
+    @Test
+    public void equalsTimeOfTasks() {
+        LocalDateTime startTime1 = LocalDateTime.of(2023, 02, 26, 00, 00);//task1
+        task2.setStartTime(startTime1);
+        task1.setStartTime(startTime1);
+        manager.createTask(task1);
+        manager.createTask(task2);
+        Assertions.assertFalse(manager.getTask().contains(task2), "Добавлена задача с одинаковым startTime");
+        Assertions.assertFalse(manager.getPrioritizedTasks().contains(task2), "Добавлена задача с одинаковым startTime в сортированный список");
+    }
+
+    @Test
+    public void intersectionTimeOfTasks() {
+        LocalDateTime startTime1 = LocalDateTime.of(2023, 02, 26, 00, 00);//task1
+        LocalDateTime startTime2 = LocalDateTime.of(2023, 02, 26, 00, 05); //task2
+        task1.setStartTime(startTime1);
+        task1.setDuration(30);
+        task2.setStartTime(startTime2);
+        manager.createTask(task1);
+        manager.createTask(task2);
+        Assertions.assertFalse(manager.getPrioritizedTasks().contains(task2), "Добавлена задача с пересекающимся startTime");
+        Assertions.assertFalse(manager.getTask().contains(task2), "Добавлена задача с одинаковым startTime");
     }
 }

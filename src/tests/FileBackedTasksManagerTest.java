@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +69,14 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     // тест метода save c историей
     @Test
     public void saveTest() {
+        LocalDateTime startTime1 = LocalDateTime.of(2023, 02, 26, 00, 03);//task1
+        LocalDateTime startTime2 = LocalDateTime.of(2023, 02, 26, 00, 02); //task2
+        LocalDateTime startTime3 = LocalDateTime.of(2023, 02, 26, 00, 01); // task3
+        LocalDateTime startTime4 = LocalDateTime.of(2023, 02, 26, 00, 04);// epic1
+        task1.setStartTime(startTime1);
+        task2.setStartTime(startTime2);
+        task3.setStartTime(startTime3);
+        subtask1.setStartTime(startTime4); // subtask1 принадлежит epic1 и у них одинаковые start
         super.createTasksForTestWithHistory(); // создал список задач c историей
         manager.save();
         readFile(); // считываю файл после его заполнения
@@ -83,28 +92,37 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     // тест метода save без истории
     @Test
     public void saveWithoutHistory() {
-        super.createTasksWithoutHistory();
+        super.createTasksWithoutHistory(); // создал список задач без истории
         manager.save();
-        readFile();
+        readFile(); // считываю файл после его заполнения
         Assertions.assertEquals(saveTasks, manager.getTask(), "Некорректные задачи задач в файле"); //equals переопределен в классе Task
         Assertions.assertEquals(saveEpics, manager.getEpics(), "Некорректные эпики в файле"); // сравниваем эпики из файла и в менеджере
         Assertions.assertEquals(saveSubtasks, manager.getSubtasks(), "Некорректные подзадачи в файле");
         Assertions.assertTrue(manager.getHistory().isEmpty(), "Список истории не пуст");
     }
-// тест метода save с пустым списком задач
+
+    // тест метода save с пустым списком задач
     @Test
     public void saveWithEmptyTaskList() {
         manager.save();
-        Assertions.assertTrue(manager.getTask().isEmpty(),"Список задач не пуст");
-        Assertions.assertTrue(manager.getEpics().isEmpty(),"Список эпиков не пуст");
+        Assertions.assertTrue(manager.getTask().isEmpty(), "Список задач не пуст");
+        Assertions.assertTrue(manager.getEpics().isEmpty(), "Список эпиков не пуст");
         Assertions.assertTrue(manager.getSubtasks().isEmpty(), "Список подзадач не пуст");
-        Assertions.assertTrue(manager.getHistory().isEmpty(),"Список истории не пуст");
+        Assertions.assertTrue(manager.getHistory().isEmpty(), "Список истории не пуст");
 
     }
 
     // тест метода loadFile
     @Test
     public void loadFromFileTest() {
+        LocalDateTime startTime1 = LocalDateTime.of(2023, 02, 26, 00, 03);//task1
+        LocalDateTime startTime2 = LocalDateTime.of(2023, 02, 26, 00, 02); //task2
+        LocalDateTime startTime3 = LocalDateTime.of(2023, 02, 26, 00, 01); // task3
+        LocalDateTime startTime4 = LocalDateTime.of(2023, 02, 26, 00, 04);// epic1
+        task1.setStartTime(startTime1);
+        task2.setStartTime(startTime2);
+        task3.setStartTime(startTime3);
+        subtask1.setStartTime(startTime4); // subtask1 принадлежит epic1 и у них одинаковые start
         super.createTasksForTestWithHistory();
         FileBackedTasksManager.loadFromFile(file);
         readFile(); // считываю файл и сохраняю в списки
@@ -131,11 +149,11 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
     //тест метода loadFromFile с пустым списком задач
     @Test
-    public void loadFromFileWithEmptyTaskList(){
+    public void loadFromFileWithEmptyTaskList() {
         FileBackedTasksManager.loadFromFile(file);
-        Assertions.assertTrue(manager.getTask().isEmpty(),"Список задач не пуст");
-        Assertions.assertTrue(manager.getEpics().isEmpty(),"Список эпиков не пуст");
+        Assertions.assertTrue(manager.getTask().isEmpty(), "Список задач не пуст");
+        Assertions.assertTrue(manager.getEpics().isEmpty(), "Список эпиков не пуст");
         Assertions.assertTrue(manager.getSubtasks().isEmpty(), "Список подзадач не пуст");
-        Assertions.assertTrue(manager.getHistory().isEmpty(),"Список истории не пуст");
+        Assertions.assertTrue(manager.getHistory().isEmpty(), "Список истории не пуст");
     }
 }
