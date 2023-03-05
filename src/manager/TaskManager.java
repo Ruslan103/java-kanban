@@ -5,12 +5,15 @@ import model.Subtask;
 import model.Task;
 
 import java.util.List;
-import java.util.Set;
+import java.util.TreeSet;
 
 public interface TaskManager {
     void createEpic(Epic epic);
+
     void createSubtask(Subtask subtask);
+
     void createTask(Task task);
+
     // метод для вывода эпиков (п.2.1 ТЗ)
     List<Epic> getEpics();
 
@@ -57,7 +60,7 @@ public interface TaskManager {
 
     List<Task> getHistory();
 
-//    void setPrioritizedTasks(Task task);
+    //    void setPrioritizedTasks(Task task);
 //
-   List<Task> getPrioritizedTasks();
+    TreeSet<Task> getPrioritizedTasks();
 }

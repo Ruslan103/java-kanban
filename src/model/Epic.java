@@ -1,14 +1,7 @@
 package model;
 
-import manager.InMemoryTaskManager;
-import manager.TaskManager;
-
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Objects;
-
-import static model.TypeTask.EPIC;
 
 public class Epic extends Task {
     private LocalDateTime endTime; // время окончания эпика

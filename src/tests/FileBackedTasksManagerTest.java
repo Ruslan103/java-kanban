@@ -22,7 +22,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     List<Integer> saveHistory = new ArrayList<>();
 
     @BeforeEach
-    public void BeforeEach() {
+    public void beforeEach() {
         manager = new FileBackedTasksManager(file);
     }
 
@@ -109,7 +109,6 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         Assertions.assertTrue(manager.getEpics().isEmpty(), "Список эпиков не пуст");
         Assertions.assertTrue(manager.getSubtasks().isEmpty(), "Список подзадач не пуст");
         Assertions.assertTrue(manager.getHistory().isEmpty(), "Список истории не пуст");
-
     }
 
     // тест метода loadFile

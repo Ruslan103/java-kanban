@@ -1,8 +1,6 @@
 package model;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Task {
@@ -11,7 +9,7 @@ public class Task {
     // Для генерации идентификаторов можно использовать числовое поле класса менеджер, увеличивая его на 1, когда нужно получить новое значение.
     private Status status; // Статус, отображающий её прогресс
     private String description; // описание
-
+    private LocalDateTime startTime; //дата, когда предполагается приступить к выполнению задачи
     private long duration; //продолжительность задачи, оценка того, сколько времени она займёт в минутах (число)
 
     public LocalDateTime getStartTime() {
@@ -21,8 +19,6 @@ public class Task {
     public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
-
-    private LocalDateTime startTime; //дата, когда предполагается приступить к выполнению задачи
 
     public Task(String title, String description, Status status) {
         this.title = title;
@@ -78,6 +74,9 @@ public class Task {
 
     //время завершения задачи, которое рассчитывается исходя из startTime и duration
     public LocalDateTime getEndTime() {
+        if (startTime == null) {
+            return null;
+        }
         return startTime.plusMinutes(duration);
     }
 

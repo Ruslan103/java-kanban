@@ -25,9 +25,4 @@ public class Subtask extends Task { //Для каждой подзадачи и�
     public TypeTask getType() {
         return TypeTask.SUBTASK;
     }
-
-//    @Override
-//    public LocalDateTime getEndTime() {
-//        return getStartTime().plusMinutes(getDuration());
-//    }
 }

@@ -1,7 +1,5 @@
 package tests;
 
-import manager.InMemoryTaskManager;
-import manager.IntersectionOfTasks;
 import manager.TaskManager;
 import model.Epic;
 import model.Status;
@@ -10,8 +8,6 @@ import model.Task;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Executable;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -370,18 +366,18 @@ abstract class TaskManagerTest<T extends TaskManager> {
     // проверяю, что у эпика startTime и getTime корректно добавляются
     @Test
     public void starTimeAndendTimeEpic() {
-        LocalDateTime subtask1StartTime = LocalDateTime.of(2023, 02, 26, 00, 00);
+        LocalDateTime subtask1StartTime = LocalDateTime.of(2023, 02, 26, 00, 30);
         subtask1.setStartTime(subtask1StartTime);
         subtask1.setDuration(15);
-        LocalDateTime subtask2StartTime = LocalDateTime.of(2023, 02, 26, 00, 30);
+        LocalDateTime subtask2StartTime = LocalDateTime.of(2023, 02, 26, 00, 00);
         subtask2.setStartTime(subtask2StartTime);
         subtask2.setDuration(30);
         createTasksForTestWithHistory();
-        Assertions.assertEquals(subtask1.getStartTime(), epic1.getStartTime(), "Не верная дата начала эпика");
-        Assertions.assertEquals(subtask2.getEndTime(), epic1.getEndTime(), "Не верная дата завершения эпика");
+        Assertions.assertEquals(subtask2.getStartTime(), epic1.getStartTime(), "Не верная дата начала эпика");
+        Assertions.assertEquals(subtask1.getEndTime(), epic1.getEndTime(), "Не верная дата завершения эпика");
     }
 
-    // проверяю сортировку
+    //  проверяю сортировку
     @Test
     public void getPrioritizedTasksTest() {
         LocalDateTime startTime1 = LocalDateTime.of(2023, 02, 26, 00, 03);//task1
@@ -393,17 +389,11 @@ abstract class TaskManagerTest<T extends TaskManager> {
         task3.setStartTime(startTime3);
         subtask1.setStartTime(startTime4); // subtask1 принадлежит epic1 и у них одинаковые start
         createTasksForTestWithHistory();
-        int indexTask1 = manager.getPrioritizedTasks().indexOf(task1); // получаем индекс задач
-        int indexTask2 = manager.getPrioritizedTasks().indexOf(task2);
-        int indexTask3 = manager.getPrioritizedTasks().indexOf(task3);
-        int indexSubtask1 = manager.getPrioritizedTasks().indexOf(subtask1);
-        int indexSubtask2 = manager.getPrioritizedTasks().indexOf(subtask2);
+        int firstTaskId = manager.getPrioritizedTasks().first().getId(); // получаем индекс задач
+        int lostTaskId = manager.getPrioritizedTasks().last().getId();
         Assertions.assertTrue(manager.getEpics().contains(epic1), "не содержит эпик"); // проверяю, что эпик не удален т.к. есть пересечение по времени с его подзадачей
-        Assertions.assertEquals(indexTask3, 0);
-        Assertions.assertEquals(indexTask2, 1);
-        Assertions.assertEquals(indexTask1, 2);
-        Assertions.assertEquals(indexSubtask1, 3);
-        Assertions.assertTrue(indexSubtask1 < indexSubtask2); //  subtask2.starTime =null, проверяем что находится после отсортированных задач
+        Assertions.assertEquals(firstTaskId, task3.getId(), "Неверная сортировка");
+        Assertions.assertEquals(lostTaskId, subtask3.getId(), "Неверная сортировка");
     }
 
     //проверяю, что задача обновится если startTime совпадает с предыдущей задачей
@@ -427,9 +417,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         task2.setStartTime(startTime1);
         task1.setStartTime(startTime1);
         manager.createTask(task1);
-        manager.createTask(task2);
-        Assertions.assertFalse(manager.getTask().contains(task2), "Добавлена задача с одинаковым startTime");
-        Assertions.assertFalse(manager.getPrioritizedTasks().contains(task2), "Добавлена задача с одинаковым startTime в сортированный список");
+        Assertions.assertThrows(RuntimeException.class, () -> manager.createTask(task2), "Исключение не выбрасывается");
     }
 
     @Test
@@ -440,8 +428,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
         task1.setDuration(30);
         task2.setStartTime(startTime2);
         manager.createTask(task1);
-        manager.createTask(task2);
-        Assertions.assertFalse(manager.getPrioritizedTasks().contains(task2), "Добавлена задача с пересекающимся startTime");
-        Assertions.assertFalse(manager.getTask().contains(task2), "Добавлена задача с одинаковым startTime");
+        Assertions.assertThrows(RuntimeException.class, () -> manager.createTask(task2), "Исключение не выбрасывается");
     }
 }
