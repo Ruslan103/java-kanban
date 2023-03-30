@@ -50,7 +50,7 @@ public class InMemoryTaskManager implements TaskManager {
         epics.get(epicID).addSubtaskID(id);
         fillEpicStatus(epicID);
         getEndTimeForEpic(epicID);
-        sort.setPrioritizedTasks(subtask);
+        sort.addPrioritizedTasks(subtask);
     }
 
     // создание задачи п.2.4
@@ -60,7 +60,7 @@ public class InMemoryTaskManager implements TaskManager {
         id++;
         task.setId(id);
         tasks.put(id, task);
-        sort.setPrioritizedTasks(task);
+        sort.addPrioritizedTasks(task);
     }
 
     // метод для вывода  эпиков (п.2.1 ТЗ)
@@ -161,7 +161,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         sort.intersectionOfTasksException(task);
         tasks.put(task.getId(), task);
-        sort.setPrioritizedTasks(task);
+        sort.addPrioritizedTasks(task);
     }
 
     // обновление эпика п.2.5
@@ -183,7 +183,7 @@ public class InMemoryTaskManager implements TaskManager {
         subtasks.put(subtask.getId(), subtask);
         int epicID = subtask.getEpicID();
         fillEpicStatus(epicID);
-        sort.setPrioritizedTasks(subtask);
+        sort.addPrioritizedTasks(subtask);
     }
 
     // обновление статуса эпика
@@ -298,7 +298,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     // метод получения отсортированного списка задач
-    public TreeSet<Task> getPrioritizedTasks() {
+    public List<Task> getPrioritizedTasks() {
         return sort.getPrioritizedTasks();
     }
 
@@ -306,28 +306,20 @@ public class InMemoryTaskManager implements TaskManager {
         TaskComparator taskComparator = new TaskComparator();
         private final TreeSet<Task> prioritizedTasks = new TreeSet<>(taskComparator);
 
-        public void intersectionOfTasksException(Task task) throws IntersectionOfTasksException {
+        public void intersectionOfTasksException(Task task) {
             for (Task value : prioritizedTasks) {
-                if (value.getStartTime() == null) {
-                    return;
-                }
-                if (task.getStartTime() == null) {
-                    return;
-                }
-                if (task.getStartTime().equals(value.getStartTime()) && task.getId() != value.getId()) {
+
+                if (task.getStartTime() != null && task.getStartTime().equals(value.getStartTime()) && task.getId() != value.getId()) {
                     throw new IntersectionOfTasksException("Задачи пересекаются по времени выполнения");
                 }
-                if (task.getEndTime() == null) {
-                    return;
-                }
-                if (value.getEndTime() == null) {
-                    return;
-                }
-                if (task.getEndTime().equals(value.getEndTime()) && task.getId() != value.getId()) {
+                if (task.getEndTime() != null && task.getEndTime().equals(value.getEndTime()) && task.getId() != value.getId()) {
                     throw new IntersectionOfTasksException("Задачи пересекаются по времени выполнения");
                 }
-                if (task.getStartTime().isAfter(value.getStartTime()) && task.getStartTime().isBefore(value.getEndTime())
-                        || task.getEndTime().isAfter(value.getStartTime())
+                if (task.getEndTime() != null && value.getEndTime() != null
+                        && task.getStartTime().isAfter(value.getStartTime())
+                        && task.getStartTime().isBefore(value.getEndTime())
+                        || task.getEndTime() != null && value.getEndTime() != null
+                        && task.getEndTime().isAfter(value.getStartTime())
                         && task.getEndTime().isBefore(value.getEndTime())) {
                     throw new IntersectionOfTasksException("Задачи пересекаются по времени выполнения");
                 }
@@ -344,17 +336,20 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         public void removeTask(Task task) {
-            prioritizedTasks.remove(task);
+            if (task.getStartTime() == null) {
+                prioritizedTasks.removeIf(task::equals);
+            }
             prioritizedTasks.remove(task);
         }
 
         //создание отсортированного списка
-        public void setPrioritizedTasks(Task task) {
+        public void addPrioritizedTasks(Task task) {
+            prioritizedTasks.removeIf(t -> task.getId() == t.getId()); // если в prioritizedTasks содержится id как у task то удаляем этот элемент
             prioritizedTasks.add(task);
         }
 
-        public TreeSet<Task> getPrioritizedTasks() {// получение отсортированного списка
-            return prioritizedTasks;
+        public List<Task> getPrioritizedTasks() {// получение отсортированного списка
+            return new ArrayList<>(prioritizedTasks);
         }
     }
 

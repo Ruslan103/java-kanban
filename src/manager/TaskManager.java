@@ -62,5 +62,5 @@ public interface TaskManager {
 
     //    void setPrioritizedTasks(Task task);
 //
-    TreeSet<Task> getPrioritizedTasks();
+    List<Task> getPrioritizedTasks();
 }

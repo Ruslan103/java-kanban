@@ -389,8 +389,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
         task3.setStartTime(startTime3);
         subtask1.setStartTime(startTime4); // subtask1 принадлежит epic1 и у них одинаковые start
         createTasksForTestWithHistory();
-        int firstTaskId = manager.getPrioritizedTasks().first().getId(); // получаем индекс задач
-        int lostTaskId = manager.getPrioritizedTasks().last().getId();
+        int firstTaskId = manager.getPrioritizedTasks().get(0).getId(); // получаем индекс задач
+        int lostTaskId = manager.getPrioritizedTasks().get(manager.getPrioritizedTasks().size() - 1).getId();
         Assertions.assertTrue(manager.getEpics().contains(epic1), "не содержит эпик"); // проверяю, что эпик не удален т.к. есть пересечение по времени с его подзадачей
         Assertions.assertEquals(firstTaskId, task3.getId(), "Неверная сортировка");
         Assertions.assertEquals(lostTaskId, subtask3.getId(), "Неверная сортировка");
@@ -406,7 +406,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         task1.setStartTime(startTime1);
         manager.createTask(task1);
         manager.updateTask(taskTest);
-        Assertions.assertTrue(manager.getPrioritizedTasks().contains(taskTest), "Новая задача не содержится в списке истории");
+        Assertions.assertTrue(manager.getPrioritizedTasks().contains(taskTest), "Новая задача не содержится в отсортированном списке ");
         Assertions.assertTrue(manager.getTask().contains(taskTest), "Новая задача не содержится в списке задач");
     }
 
