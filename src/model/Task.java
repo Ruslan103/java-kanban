@@ -1,5 +1,6 @@
 package model;
 
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -11,6 +12,7 @@ public class Task {
     private String description; // описание
     private LocalDateTime startTime; //дата, когда предполагается приступить к выполнению задачи
     private long duration; //продолжительность задачи, оценка того, сколько времени она займёт в минутах (число)
+
 
     public LocalDateTime getStartTime() {
         return startTime;
@@ -79,7 +81,6 @@ public class Task {
         }
         return startTime.plusMinutes(duration);
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -87,4 +88,6 @@ public class Task {
         Task task = (Task) o;
         return Objects.equals(title, task.title) && Objects.equals(description, task.description) && id == task.getId() && Objects.equals(status, task.getStatus());
     }
+
+
 }

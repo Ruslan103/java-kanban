@@ -16,6 +16,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         this.file = file;
     }
 
+    public FileBackedTasksManager() {
+        file = null;
+    }
+
     @Override
     public void createEpic(Epic epic) {
         super.createEpic(epic);
@@ -186,6 +190,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             List<Epic> epics = new ArrayList<>(super.getEpics());
             List<Subtask> subtasks = new ArrayList<>(super.getSubtasks());
             List<Task> history = new ArrayList<>(super.getHistory());
+
             for (Task task : tasks) {
                 taskFile.write(toStringTask(task) + "\n");
             }
@@ -199,6 +204,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             for (Task task : history) {
                 taskFile.write(task.getId() + ",");
             }
+
             taskFile.close();
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка записи файла", e);
