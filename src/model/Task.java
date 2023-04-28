@@ -29,6 +29,13 @@ public class Task {
         this.description = description;
     }
 
+    public Task(String title, String description, Status status,int id) {
+        this.title = title;
+        this.id = id;
+        this.status = status;
+        this.description = description;
+    }
+
     public long getDuration() {
         return duration;
     }

@@ -24,12 +24,14 @@ public class HttpTaskManager extends FileBackedTasksManager {
     KVTaskClient client;
 
     public HttpTaskManager(String url) {
+        if (client!=null){
+            load();
+        }
         client = new KVTaskClient(url);
     }
 
     @Override
     public void save() {
-
                 Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .registerTypeAdapter(LocalDateTime.class, new HttpTaskServer.LocalDateTimeAdapter())
@@ -43,19 +45,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
         client.put("epic",gson.toJson(epics));
         client.put("subtask",gson.toJson(subtasks));
         client.put("history",gson.toJson(history));
-//        for (Task task : tasks) {
-//
-//           client.put("task",gson.toJson(task));
-//        }
-//        for (Epic epic : epics) {
-//            client.put("epic",gson.toJson(epic));
-//        }
-//        for (Subtask subtask : subtasks) {
-//            client.put("subtask",gson.toJson(subtask));
-//        }
-//        for (Task task:history){
-//            client.put("history",gson.toJson(task));
-//        }
 
 
     }
@@ -91,6 +80,4 @@ public class HttpTaskManager extends FileBackedTasksManager {
             super.historyManager.add(task);
         }
     }
-
-
 }

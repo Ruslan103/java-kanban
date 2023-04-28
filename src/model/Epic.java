@@ -12,6 +12,11 @@ public class Epic extends Task {
         this.subtasksID = new ArrayList<>();
     }
 
+    public Epic(String title, String description, Status status, int id) {
+        super(title, description, status, id);
+        this.subtasksID = new ArrayList<>();
+    }
+
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
