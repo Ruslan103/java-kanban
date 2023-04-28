@@ -1,33 +1,26 @@
-package manager;
+package server;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 import com.sun.net.httpserver.HttpExchange;
+import manager.Managers;
+import manager.TaskManager;
 import model.Epic;
-import model.Status;
 import model.Subtask;
 import model.Task;
 
@@ -35,7 +28,6 @@ public class HttpTaskServer {
     private static final TaskManager taskManager = Managers.getDefaultFileBacked();
 
     public void httpTaskServer() throws IOException {
-
         HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 8080), 0);
         server.createContext("/tasks/task", this::handleTask);
         server.createContext("/tasks/subtask", this::handleSubtask);
@@ -43,25 +35,21 @@ public class HttpTaskServer {
         server.createContext("/tasks", this::handleAllTasks);
         server.createContext("/tasks/history", this::handleHistory);
         server.start();
-
     }
 
     private void handleHistory(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();
-        String stringUri = exchange.getRequestURI().toString();
         switch (method) {
             case "GET":
                 taskManager.getHistory();
-                // отправка ответа
                 String response = "History get successfully";
-                exchange.sendResponseHeaders(200, response.length());
+                exchange.sendResponseHeaders(200, response.length());  // отправка ответа
                 try (OutputStream responseBody = exchange.getResponseBody()) {
                     responseBody.write(response.getBytes());
                 }
                 break;
             default:
-                // отправка ошибки в случае неправильного метода запроса
-                response = "Invalid request method";
+                response = "Invalid request method"; // отправка ошибки в случае неправильного метода запроса
                 exchange.sendResponseHeaders(400, response.length());
                 try (OutputStream responseBody = exchange.getResponseBody()) {
                     responseBody.write(response.getBytes());
@@ -69,22 +57,19 @@ public class HttpTaskServer {
         }
     }
 
-
     private void handleAllTasks(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();
         String stringUri = exchange.getRequestURI().toString();
         switch (method) {
             case "GET":
                 taskManager.getPrioritizedTasks();
-                // отправка ответа
                 String response = "Tasks get successfully";
-                exchange.sendResponseHeaders(200, response.length());
+                exchange.sendResponseHeaders(200, response.length()); // отправка ответа
                 try (OutputStream responseBody = exchange.getResponseBody()) {
                     responseBody.write(response.getBytes());
                 }
                 break;
-            default:
-                // отправка ошибки в случае неправильного метода запроса
+            default:// отправка ошибки в случае неправильного метода запроса
                 response = "Invalid request method";
                 exchange.sendResponseHeaders(400, response.length());
                 try (OutputStream responseBody = exchange.getResponseBody()) {
@@ -98,11 +83,10 @@ public class HttpTaskServer {
         String stringUri = exchange.getRequestURI().toString();
         switch (method) {
             case "POST":
-                try (InputStream requestBody = exchange.getRequestBody()) { /// передать задачу через ури
+                try (InputStream requestBody = exchange.getRequestBody()) { // передать задачу через ури
                     String response;
                     String json = new String(requestBody.readAllBytes(), StandardCharsets.UTF_8);
-                    // преобразование JSON-строки в объект Task
-                    Gson gson = new GsonBuilder()
+                    Gson gson = new GsonBuilder() // преобразование JSON-строки в объект Task
                             .setPrettyPrinting()
                             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                             .registerTypeAdapter(Duration.class, new DurationAdapter())
@@ -168,8 +152,7 @@ public class HttpTaskServer {
                     }
                 }
                 break;
-            default:
-                // отправка ошибки в случае неправильного метода запроса
+            default:// отправка ошибки в случае неправильного метода запроса
                 String response = "Invalid request method";
                 exchange.sendResponseHeaders(400, response.length());
                 try (OutputStream responseBody = exchange.getResponseBody()) {
@@ -183,26 +166,21 @@ public class HttpTaskServer {
         String stringUri = exchange.getRequestURI().toString();
         switch (method) {
             case "POST":
-
                 try (InputStream requestBody = exchange.getRequestBody()) {
                     String response;
                     String json = new String(requestBody.readAllBytes(), StandardCharsets.UTF_8);
-                    // преобразование JSON-строки в объект Task
-                    Gson gson = new GsonBuilder()
+                    Gson gson = new GsonBuilder()// преобразование JSON-строки в объект Task
                             .setPrettyPrinting()
                             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                             .create();
                     Subtask subtask = gson.fromJson(json, Subtask.class);
-                    // добавление задачи
-                    if (taskManager.getSubtaskForId(subtask.getId())==null){
+                    if (taskManager.getSubtaskForId(subtask.getId()) == null) {
                         taskManager.createSubtask(subtask);
                         response = "Subtask created successfully";
-                    }
-                    else {taskManager.updateTask(subtask);
+                    } else {
+                        taskManager.updateTask(subtask);
                         response = "Subtask update successfully";
                     }
-                    // отправка ответа
-
                     exchange.sendResponseHeaders(200, response.length());
                     try (OutputStream responseBody = exchange.getResponseBody()) {
                         responseBody.write(response.getBytes());
@@ -215,26 +193,24 @@ public class HttpTaskServer {
                     URI uri = exchange.getRequestURI();
                     int id = Integer.parseInt(uri.getQuery().split("=")[1]);
                     if (taskManager.getSubtaskForId(id) == null) { // (3) если метод возвращает null то сообщаем что такой задачи не существует
-                         response = "There is no subtask with this id";
+                        response = "There is no subtask with this id";
                         exchange.sendResponseHeaders(404, response.length());
                         try (OutputStream responseBody = exchange.getResponseBody()) {
                             responseBody.write(response.getBytes());
                         }
                     } else { // (3) иначе получаем задачу
                         taskManager.getSubtaskForId(id);
-                         response = "Subtask by id received";
+                        response = "Subtask by id received";
                     }
-                }
-                else if(stringUri.contains("tasks/subtask/epic/?id=")){
+                } else if (stringUri.contains("tasks/subtask/epic/?id=")) {
                     URI uri = exchange.getRequestURI();
                     int id = Integer.parseInt(uri.getQuery().split("=")[1]);
-                    Epic epic=taskManager.getEpicForId(id);
+                    Epic epic = taskManager.getEpicForId(id);
                     taskManager.getSubtasksList(epic);
                     response = "Subtasks get successfully";
-                }
-                else { // (2) иначе запускаем метод получения задач
+                } else { // (2) иначе запускаем метод получения задач
                     taskManager.getSubtasks();
-                     response = "Subtask get successfully";
+                    response = "Subtask get successfully";
                 }
                 exchange.sendResponseHeaders(200, response.length());
                 try (OutputStream responseBody = exchange.getResponseBody()) {
@@ -256,9 +232,8 @@ public class HttpTaskServer {
                     responseBody.write(response.getBytes());
                 }
                 break;
-            default:
-                // отправка ошибки в случае неправильного метода запроса
-                 response = "Invalid request method";
+            default:// отправка ошибки в случае неправильного метода запроса
+                response = "Invalid request method";
                 exchange.sendResponseHeaders(400, response.length());
                 try (OutputStream responseBody = exchange.getResponseBody()) {
                     responseBody.write(response.getBytes());
@@ -273,18 +248,16 @@ public class HttpTaskServer {
             case "POST":
                 try (InputStream requestBody = exchange.getRequestBody()) {
                     String json = new String(requestBody.readAllBytes(), StandardCharsets.UTF_8);
-                    // преобразование JSON-строки в объект Эпик
-                    Gson gson = new GsonBuilder()
+                    Gson gson = new GsonBuilder()   // преобразование JSON-строки в объект Эпик
                             .setPrettyPrinting()
                             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                             .create();
                     Epic epic = gson.fromJson(json, Epic.class);
-                    // добавление задачи
-                    if (taskManager.getEpicForId(epic.getId())==null){
+                    if (taskManager.getEpicForId(epic.getId()) == null) {
                         taskManager.createEpic(epic);
+                    } else {
+                        taskManager.updateEpic(epic);
                     }
-                   else {taskManager.updateEpic(epic);}
-                    // отправка ответа
                     String response = "Epic created successfully";
                     exchange.sendResponseHeaders(200, response.length());
                     try (OutputStream responseBody = exchange.getResponseBody()) {
@@ -338,16 +311,13 @@ public class HttpTaskServer {
                     }
                 }
                 break;
-            default:
-                // отправка ошибки в случае неправильного метода запроса
+            default:// отправка ошибки в случае неправильного метода запроса
                 String response = "Invalid request method";
                 exchange.sendResponseHeaders(400, response.length());
                 try (OutputStream responseBody = exchange.getResponseBody()) {
                     responseBody.write(response.getBytes());
                 }
         }
-
-
     }
 
     // правила конвертации, описанные в TypeAdapter для класса LocalDate
@@ -380,10 +350,4 @@ public class HttpTaskServer {
             return Duration.parse(str);
         }
     }
-
-    public static void main(String[] args) throws IOException, InterruptedException {
-        HttpTaskServer h = new HttpTaskServer();
-        h.httpTaskServer();
-    }
 }
-

@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import manager.*;
 import model.*;
 import org.junit.jupiter.api.*;
+import server.HttpTaskServer;
+import server.KVServer;
 
 import java.io.IOException;
 import java.net.URI;
@@ -369,5 +371,3 @@ public class HttpTaskManagerTest {
         Assertions.assertEquals(response, expectedResponse, "код ответа не 200");
     }
 }
-
-
