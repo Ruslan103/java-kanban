@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import model.Epic;
 import model.Subtask;
 import model.Task;
+import server.CustomException;
 import server.HttpTaskServer;
 import server.KVTaskClient;
 
@@ -17,9 +18,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HttpTaskManager extends FileBackedTasksManager {
-    KVTaskClient client;
+    private KVTaskClient client;
+    private final Type taskListType = new TypeToken<List<Task>>() {
+    }.getType();
+    private final Type epicListType = new TypeToken<List<Task>>() {
+    }.getType();
+    private final Type subtaskListType = new TypeToken<List<Task>>() {
+    }.getType();
+    private final Type historyListType = new TypeToken<List<Task>>() {
+    }.getType();
 
-    public HttpTaskManager(String url) {
+    public HttpTaskManager(String url) throws CustomException {
         if (client != null) {
             load();
         }
@@ -43,16 +52,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         client.put("history", gson.toJson(history));
     }
 
-    public Type taskListType = new TypeToken<List<Task>>() {
-    }.getType();
-    public Type epicListType = new TypeToken<List<Task>>() {
-    }.getType();
-    public Type subtaskListType = new TypeToken<List<Task>>() {
-    }.getType();
-    public Type historyListType = new TypeToken<List<Task>>() {
-    }.getType();
-
-    public void load() {
+    public void load() throws CustomException {
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .registerTypeAdapter(LocalDateTime.class, new HttpTaskServer.LocalDateTimeAdapter())
@@ -64,12 +64,15 @@ public class HttpTaskManager extends FileBackedTasksManager {
         List<Task> history = gson.fromJson(client.load("history"), historyListType);
         for (Task task : tasks) {
             super.tasks.put(task.getId(), task);
+            super.getPrioritizedTasks().add(task);
         }
         for (Epic epic : epics) {
             super.epics.put(epic.getId(), epic);
+            super.getPrioritizedTasks().add(epic);
         }
         for (Subtask subtask : subtasks) {
             super.subtasks.put(subtask.getId(), subtask);
+            super.getPrioritizedTasks().add(subtask);
         }
         for (Task task : history) {
             super.historyManager.add(task);

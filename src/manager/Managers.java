@@ -2,6 +2,7 @@ package manager;
 
 import history.HistoryManager;
 import history.InMemoryHistoryManager;
+import server.CustomException;
 
 import java.io.File;
 
@@ -12,7 +13,7 @@ public class Managers {
         return new InMemoryTaskManager();
     }
     // public static TaskManager getDefaultFileBacked(){return  new FileBackedTasksManager(file);}
-    public static TaskManager getDefaultFileBacked(){return  new HttpTaskManager(url);}
+    public static TaskManager getDefaultFileBacked() throws CustomException {return  new HttpTaskManager(url);}
 
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();

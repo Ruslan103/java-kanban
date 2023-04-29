@@ -1,10 +1,11 @@
+import server.CustomException;
 import server.HttpTaskServer;
 import server.KVServer;
 
 import java.io.IOException;
 
 public class Main {
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException, InterruptedException, CustomException {
        // Task task1 = new Task("task1", "descriptionT1", Status.NEW);
         KVServer s= new KVServer();
         s.start();

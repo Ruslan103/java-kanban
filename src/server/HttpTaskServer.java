@@ -25,7 +25,10 @@ import model.Subtask;
 import model.Task;
 
 public class HttpTaskServer {
-    private static final TaskManager taskManager = Managers.getDefaultFileBacked();
+    private final TaskManager taskManager = Managers.getDefaultFileBacked();
+
+    public HttpTaskServer() throws CustomException {
+    }
 
     public void httpTaskServer() throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 8080), 0);

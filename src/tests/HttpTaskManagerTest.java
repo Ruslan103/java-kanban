@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import manager.*;
 import model.*;
 import org.junit.jupiter.api.*;
+import server.CustomException;
 import server.HttpTaskServer;
 import server.KVServer;
 
@@ -32,7 +33,7 @@ public class HttpTaskManagerTest {
     private static HttpTaskManager manager;
 
     @BeforeEach
-    public void server() throws IOException {
+    public void server() throws IOException, CustomException {
         kvServer = new KVServer();
         kvServer.start();
         httpTaskServer = new HttpTaskServer();
