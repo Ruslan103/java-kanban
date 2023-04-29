@@ -46,10 +46,26 @@ public class HttpTaskManager extends FileBackedTasksManager {
         List<Epic> epics = new ArrayList<>(super.getEpics());
         List<Subtask> subtasks = new ArrayList<>(super.getSubtasks());
         List<Task> history = new ArrayList<>(super.getHistory());
-        client.put("task", gson.toJson(tasks));
-        client.put("epic", gson.toJson(epics));
-        client.put("subtask", gson.toJson(subtasks));
-        client.put("history", gson.toJson(history));
+        try {
+            client.put("task", gson.toJson(tasks));
+        } catch (CustomException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            client.put("epic", gson.toJson(epics));
+        } catch (CustomException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            client.put("subtask", gson.toJson(subtasks));
+        } catch (CustomException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            client.put("history", gson.toJson(history));
+        } catch (CustomException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void load() throws CustomException {
