@@ -17,6 +17,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+
 public class HttpTaskManagerTest {
     Task task1 = new Task("task1", "descriptionT1", Status.NEW);
     Task task2 = new Task("task2", "descriptionT2", Status.NEW);
@@ -32,13 +33,18 @@ public class HttpTaskManagerTest {
     private static HttpTaskServer httpTaskServer;
     private static HttpTaskManager manager;
 
-    @BeforeEach
-    public void server() throws IOException, CustomException {
+    @BeforeAll
+    public static void server() throws IOException, CustomException {
         kvServer = new KVServer();
         kvServer.start();
         httpTaskServer = new HttpTaskServer();
         httpTaskServer.httpTaskServer();
         manager = new HttpTaskManager("http://localhost:8078");
+    }
+
+    @AfterAll
+    public static void stop() {
+        kvServer.stop();
     }
 
     protected void createTasksForTestWithHistory() throws IOException, InterruptedException {
@@ -97,7 +103,7 @@ public class HttpTaskManagerTest {
     @Test
     public void getTaskById() throws IOException, InterruptedException {
         createTasksForTestWithHistory();
-        URI uri = URI.create("http://localhost:8080/tasks/task/?id=7");
+        URI uri = URI.create("http://localhost:8080/tasks/task/?id=8");
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
                 .GET()
@@ -105,8 +111,7 @@ public class HttpTaskManagerTest {
         HttpClient client = HttpClient.newHttpClient();  // HTTP-клиент с настройками по умолчанию
         HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();//  конвертация содержимого в строку
         String response = client.send(request, handler).toString();
-        System.out.println("это" + response);
-        String expectedResponse = "(GET http://localhost:8080/tasks/task/?id=7) 200";
+        String expectedResponse = "(GET http://localhost:8080/tasks/task/?id=8) 200";
         Assertions.assertEquals(response, expectedResponse, "код ответа не 200");
     }
 
@@ -140,7 +145,6 @@ public class HttpTaskManagerTest {
         Assertions.assertEquals(response, expectedResponse, "код ответа не 200");
     }
 
-    //------------------
     @Test
     public void getEpicById() throws IOException, InterruptedException {
         createTasksForTestWithHistory();
@@ -330,7 +334,7 @@ public class HttpTaskManagerTest {
     @Test
     public void deleteSubtaskForIdTest() throws IOException, InterruptedException {
         createTasksForTestWithHistory();
-        URI uri = URI.create("http://localhost:8080/tasks/subtask/?id=4");
+        URI uri = URI.create("http://localhost:8080/tasks/subtask/?id=6");
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
                 .DELETE()
@@ -338,7 +342,7 @@ public class HttpTaskManagerTest {
         HttpClient client = HttpClient.newHttpClient();  // HTTP-клиент с настройками по умолчанию
         HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();//  конвертация содержимого в строку
         String response = client.send(request, handler).toString();
-        String expectedResponse = "(DELETE http://localhost:8080/tasks/subtask/?id=4) 200";
+        String expectedResponse = "(DELETE http://localhost:8080/tasks/subtask/?id=6) 200";
         Assertions.assertEquals(response, expectedResponse, "код ответа не 200");
     }
 

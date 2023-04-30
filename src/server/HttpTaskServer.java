@@ -27,9 +27,6 @@ import model.Task;
 public class HttpTaskServer {
     private final TaskManager taskManager = Managers.getDefaultFileBacked();
 
-    public HttpTaskServer() throws CustomException {
-    }
-
     public void httpTaskServer() throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 8080), 0);
         server.createContext("/tasks/task", this::handleTask);
@@ -226,6 +223,10 @@ public class HttpTaskServer {
                     int id = Integer.parseInt(uri.getQuery().split("=")[1]);
                     taskManager.removeForIdSubtask(id);
                     response = "Subtask remove successfully";
+                    exchange.sendResponseHeaders(200, response.length());
+                    try (OutputStream responseBody = exchange.getResponseBody()) {
+                        responseBody.write(response.getBytes());
+                    }
                 } else { //(4) если id не содержится то очищаем все задачи
                     taskManager.clearSubtasks();
                     response = "Subtask clear successfully";
